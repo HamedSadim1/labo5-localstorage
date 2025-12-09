@@ -1,46 +1,117 @@
-# Getting Started with Create React App
+# Dad Jokes App 🎭
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Een moderne, interactieve webapplicatie voor het genieten van dad jokes, gebouwd met de nieuwste webtechnologieën. Geniet van grappige woordspelingen met een prachtig glasmorfisme UI-design!
 
-## Available Scripts
+![Dad Jokes App Preview](https://via.placeholder.com/800x400/3b82f6/ffffff?text=Dad+Jokes+App+Preview)
 
-In the project directory, you can run:
+## ✨ Features
 
-### `npm start`
+- **🎯 Random Dad Jokes**: Haal verse dad jokes op van de icanhazdadjoke API
+- **❤️ Favorieten Systeem**: Sla je favoriete jokes op in localStorage
+- **🌙 Dark Mode**: Schakel tussen licht en donker thema
+- **💎 Glasmorfisme UI**: Moderne, transparante glasachtige design elementen
+- **📱 Responsive Design**: Werkt perfect op desktop en mobiel
+- **⚡ Snelle Performance**: Gebouwd met Vite voor optimale snelheid
+- **🔧 TypeScript**: Volledig getypeerd voor betere ontwikkelervaring
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 🛠️ Tech Stack
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- **Frontend Framework**: React 19
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS 4
+- **Language**: TypeScript
+- **API**: icanhazdadjoke.com
+- **State Management**: React Hooks
+- **Storage**: localStorage
 
-### `npm test`
+## 🚀 Installatie
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Clone de repository**
 
-### `npm run build`
+   ```bash
+   git clone https://github.com/HamedSadim1/labo5-localstorage.git
+   cd labo5-localstorage
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. **Installeer dependencies**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   npm install
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. **Start de ontwikkelserver**
 
-### `npm run eject`
+   ```bash
+   npm run dev
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+4. **Open je browser**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```text
+   http://localhost:5173
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 📖 Gebruik
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- **Nieuwe Joke Laden**: Klik op de "🔄 New Joke" knop voor een verse dad joke
+- **Als Favoriet Opslaan**: Klik op "❤️ Favorite" om de huidige joke toe te voegen aan je favorieten
+- **Favorieten Beheren**: Bekijk en verwijder opgeslagen jokes in de favorieten sectie
+- **Thema Wisselen**: Gebruik de dark/light mode toggle in de header
 
-## Learn More
+## 🏗️ Project Structuur
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```text
+src/
+├── components/          # UI componenten
+│   ├── Header.tsx      # App header met dark mode toggle
+│   ├── JokeCard.tsx    # Random joke display
+│   ├── FavoritesList.tsx # Favorieten beheer
+│   ├── Footer.tsx      # App footer
+│   └── DadJoke.tsx     # Hoofdcomponent
+├── hooks/              # Custom React hooks
+│   ├── useDarkMode.ts  # Dark mode logica
+│   └── useFavorites.ts # Favorieten state management
+├── utils/              # Helper functies
+│   └── api.ts          # API calls
+└── services/           # Types en interfaces
+    └── JokesData.ts    # Joke data types
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📜 Scripts
+
+- `npm run dev` - Start ontwikkelserver
+- `npm run build` - Bouw voor productie
+- `npm run preview` - Preview productie build
+
+## 🎨 UI/UX Design
+
+Deze app gebruikt moderne design principes:
+
+- **Glasmorfisme**: Transparante elementen met blur-effecten
+- **Micro-interacties**: Hover effecten en animaties
+- **Consistentie**: Uniforme spacing en kleuren
+- **Toegankelijkheid**: Goede contrast ratios en keyboard navigation
+
+## 🤝 Bijdragen
+
+Bijdragen zijn welkom! Volg deze stappen:
+
+1. Fork het project
+2. Maak een feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit je changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push naar de branch (`git push origin feature/AmazingFeature`)
+5. Open een Pull Request
+
+## 📄 Licentie
+
+Dit project is gelicentieerd onder de MIT License - zie het [LICENSE](LICENSE) bestand voor details.
+
+## 🙏 Credits
+
+- **API**: [icanhazdadjoke.com](https://icanhazdadjoke.com) voor de geweldige dad jokes
+- **Icons**: Unicode emojis voor visuele elementen
+- **Fonts**: Systeem fonts voor optimale performance
+
+---
+
+Gemaakt met ❤️ door [HamedSadim1](https://github.com/HamedSadim1)

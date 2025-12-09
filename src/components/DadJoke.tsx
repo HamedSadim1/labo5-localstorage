@@ -1,83 +1,67 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Joke, Attachment } from "services/JokesData";
+import { Joke } from "../services/JokesData";
+import { useDarkMode } from "../hooks/useDarkMode";
+import { useFavorites } from "../hooks/useFavorites";
+import { fetchJoke } from "../utils/api";
+import Header from "./Header";
+import JokeCard from "./JokeCard";
+import FavoritesList from "./FavoritesList";
+import Footer from "./Footer";
 
 const DadJoke = () => {
-  const [joke, setJoke] = useState<Joke>();
-  const [favoriteJokes, setFavoriteJokes] = useState<string>("");
-  const [newJokes, setNewJokes] = useState<string>("");
-  const [showText, setShowText] = useState<boolean>(false);
+  const [joke, setJoke] = useState<Joke | null>(null);
+  const { darkMode, toggleDarkMode } = useDarkMode();
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
 
-  const loadJoke = () => {
-    axios.get("https://icanhazdadjoke.com/slack").then((response) => {
-      setJoke(response.data);
-    });
+  const loadJoke = async () => {
+    try {
+      const newJoke = await fetchJoke();
+      setJoke(newJoke);
+    } catch (error) {
+      console.error("Error loading joke:", error);
+    }
   };
 
   useEffect(() => {
     loadJoke();
-  }, [newJokes]);
+  }, []);
 
-  const handleFavoriteJoke: React.MouseEventHandler<HTMLButtonElement> = (
-    e
-  ) => {
-    e.preventDefault();
-    const newFavoriteJoke = joke?.attachments[0].text;
-    if (newFavoriteJoke) {
-      setFavoriteJokes(newFavoriteJoke);
-      localStorage.setItem("favoriteJokes", newFavoriteJoke);
-      setShowText(true);
+  const handleFavoriteJoke = () => {
+    if (joke?.attachments[0].text) {
+      addFavorite(joke.attachments[0].text);
     }
   };
-  const handleNewJoke: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
-    setNewJokes(joke?.attachments[0].text || "");
+
+  const handleNewJoke = () => {
+    loadJoke();
   };
 
+  const isFavorite = joke
+    ? favorites.includes(joke.attachments[0].text)
+    : false;
+
   return (
-    <>
-      <div
-        className="card border-primary mb-3"
-        style={{ width: 500, margin: 20 }}
-      >
-        <title>Random Joke</title>
-        <rect width="100%" height="100%" fill="#868e96"></rect>
-
-        <div className="card-body">
-          <h5 className="card-title"> Random Jokes</h5>
-
-          <p className="card-text">{joke?.attachments[0].text}</p>
-          <div className="d-grid gap-2 d-md-block">
-            <button
-              onClick={handleFavoriteJoke}
-              className="btn btn-outline-primary"
-            >
-              Set as favorite
-            </button>
-            <button onClick={handleNewJoke} className="btn btn-outline-success">
-              New Joke
-            </button>
-          </div>
-        </div>
+    <div
+      className={`${
+        darkMode
+          ? "dark bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900"
+          : "bg-linear-to-br from-cyan-100 via-blue-100 to-indigo-100"
+      } min-h-screen transition-all duration-500`}
+    >
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+        <main className="grid md:grid-cols-2 gap-8">
+          <JokeCard
+            joke={joke}
+            onFavorite={handleFavoriteJoke}
+            onNewJoke={handleNewJoke}
+            isFavorite={isFavorite}
+          />
+          <FavoritesList favorites={favorites} onRemove={removeFavorite} />
+        </main>
+        <Footer />
       </div>
-      {showText ? (
-        <div className="card border-primary" style={{ width: 500, margin: 20 }}>
-          <title>Favorite Joke</title>
-          <div className="card-body">
-            <h5>Favorite joke</h5>
-            <p>{favoriteJokes}</p>
-          </div>
-        </div>
-      ) : (
-        <div className="card border-primary" style={{ width: 500, margin: 20 }}>
-          <title>Favorite Joke</title>
-          <div className="card-body">
-            <h5>Favorite joke</h5>
-            <p>{localStorage.getItem("favoriteJokes")}</p>
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   );
 };
 

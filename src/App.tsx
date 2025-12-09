@@ -1,14 +1,7 @@
-import DadJoke from "components/DadJoke";
-import React from "react";
-import "./App.css";
-import "bootstrap/dist/css/bootstrap.css";
+import DadJoke from "./components/DadJoke";
 
 function App() {
-  return (
-    <>
-      <DadJoke />
-    </>
-  );
+  return <DadJoke />;
 }
 
 export default App;
