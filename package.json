@@ -1,7 +1,7 @@
 {
   "name": "labo5-localstorage",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.13.2",
