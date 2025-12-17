@@ -1,6 +1,8 @@
+/** Utility functions for API interactions, including fetching jokes. */
 import axios from "axios";
 import { Joke } from "../services/JokesData";
 
+/** Fetches a random joke from the dad joke API. */
 export const fetchJoke = async (): Promise<Joke> => {
   const response = await axios.get("https://icanhazdadjoke.com/slack");
   return response.data;

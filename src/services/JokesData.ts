@@ -1,5 +1,3 @@
-import React from "react";
-
 export interface Joke {
   attachments: Attachment[];
   response_type: string;

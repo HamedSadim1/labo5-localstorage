@@ -1,3 +1,4 @@
+/** Header component with the app title and dark mode toggle. */
 import React from "react";
 
 interface HeaderProps {
@@ -5,6 +6,7 @@ interface HeaderProps {
   toggleDarkMode: () => void;
 }
 
+/** Renders the header with title and dark mode toggle button. */
 const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
   return (
     <header className="text-center mb-8">

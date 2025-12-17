@@ -1,5 +1,7 @@
+/** Footer component displaying credits and link to the joke API. */
 import React from "react";
 
+/** Renders the footer with API credits. */
 const Footer: React.FC = () => {
   return (
     <footer className="text-center mt-8">

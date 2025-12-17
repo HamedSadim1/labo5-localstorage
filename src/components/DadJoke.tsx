@@ -1,3 +1,4 @@
+/** Main component for the Dad Joke application, handling joke fetching, favorites, and dark mode. */
 import React, { useState, useEffect } from "react";
 import { Joke } from "../services/JokesData";
 import { useDarkMode } from "../hooks/useDarkMode";
@@ -8,11 +9,13 @@ import JokeCard from "./JokeCard";
 import FavoritesList from "./FavoritesList";
 import Footer from "./Footer";
 
+/** Main component rendering the dad joke app. */
 const DadJoke = () => {
   const [joke, setJoke] = useState<Joke | null>(null);
   const { darkMode, toggleDarkMode } = useDarkMode();
   const { favorites, addFavorite, removeFavorite } = useFavorites();
 
+  /** Fetches and sets a new joke. */
   const loadJoke = async () => {
     try {
       const newJoke = await fetchJoke();
@@ -26,17 +29,20 @@ const DadJoke = () => {
     loadJoke();
   }, []);
 
-  const handleFavoriteJoke = () => {
+  /** Adds the current joke to favorites. */
+  const handleFavoriteJoke = (): void => {
     if (joke?.attachments[0].text) {
       addFavorite(joke.attachments[0].text);
     }
   };
 
-  const handleNewJoke = () => {
+  /** Loads a new joke. */
+  const handleNewJoke = (): void => {
     loadJoke();
   };
 
-  const isFavorite = joke
+  // Determine if the current joke is already a favorite
+  const isFavorite: boolean = joke
     ? favorites.includes(joke.attachments[0].text)
     : false;
 

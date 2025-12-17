@@ -1,3 +1,4 @@
+/** Component for displaying and managing the list of favorite jokes. */
 import React from "react";
 
 interface FavoritesListProps {
@@ -5,6 +6,7 @@ interface FavoritesListProps {
   onRemove: (index: number) => void;
 }
 
+/** Renders the list of favorite jokes with remove buttons. */
 const FavoritesList: React.FC<FavoritesListProps> = ({
   favorites,
   onRemove,

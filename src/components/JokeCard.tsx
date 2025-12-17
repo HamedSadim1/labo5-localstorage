@@ -1,3 +1,4 @@
+/** Component for displaying the current joke with options to favorite or get a new one. */
 import React from "react";
 import { Joke } from "../services/JokesData";
 
@@ -8,6 +9,7 @@ interface JokeCardProps {
   isFavorite: boolean;
 }
 
+/** Renders the joke card with favorite and new joke buttons. */
 const JokeCard: React.FC<JokeCardProps> = ({
   joke,
   onFavorite,
