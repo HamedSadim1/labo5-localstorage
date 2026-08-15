@@ -34,6 +34,13 @@ export const SparklesIcon = (props: IconProps) => (
   </Svg>
 );
 
+/** Small triangle bullet. */
+export const CaretRightIcon = (props: IconProps) => (
+  <Svg {...props}>
+    <path d="m9 18 6-6-6-6" />
+  </Svg>
+);
+
 export const SunIcon = (props: IconProps) => (
   <Svg {...props}>
     <circle cx="12" cy="12" r="4" />

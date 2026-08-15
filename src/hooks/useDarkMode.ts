@@ -3,14 +3,14 @@ import { useState, useEffect } from "react";
 
 const STORAGE_KEY = "darkMode";
 
-/** Returns dark mode state and toggle function. */
+/** Returns dark mode state and toggle function (defaults to dark). */
 export const useDarkMode = () => {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved !== null) {
       return saved === "true";
     }
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return true;
   });
 
   useEffect(() => {

@@ -52,17 +52,16 @@ const DadJoke = () => {
   return (
     <div
       className={`${
-        darkMode ? "dark bg-slate-950" : "bg-slate-50"
+        darkMode ? "dark bg-[#0b0c0f]" : "bg-[#faf6f0]"
       } relative min-h-screen overflow-hidden transition-colors duration-300`}
     >
-      {/* Decorative background */}
+      {/* Warm decorative glows */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden"
       >
-        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl dark:bg-indigo-500/15" />
-        <div className="absolute -right-32 top-1/3 h-96 w-96 rounded-full bg-violet-500/20 blur-3xl dark:bg-violet-500/10" />
-        <div className="absolute -bottom-32 left-1/3 h-96 w-96 rounded-full bg-rose-400/10 blur-3xl dark:bg-rose-500/10" />
+        <div className="absolute -right-40 -top-40 h-[28rem] w-[28rem] rounded-full bg-orange-500/10 blur-3xl dark:bg-orange-500/10" />
+        <div className="absolute -bottom-40 -left-40 h-[24rem] w-[24rem] rounded-full bg-amber-500/10 blur-3xl dark:bg-amber-500/5" />
       </div>
 
       <div className="relative mx-auto max-w-5xl px-4 py-10 sm:px-6">

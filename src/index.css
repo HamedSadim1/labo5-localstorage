@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+
   --animate-fade-in: fade-in 0.4s ease-out both;
   --animate-slide-up: slide-up 0.5s ease-out both;
 
@@ -30,7 +34,7 @@
 /* Slim, subtle scrollbar for scrollable lists */
 .favorites-scroll {
   scrollbar-width: thin;
-  scrollbar-color: rgba(99, 102, 241, 0.4) transparent;
+  scrollbar-color: rgba(249, 115, 22, 0.4) transparent;
 }
 .favorites-scroll::-webkit-scrollbar {
   width: 6px;
@@ -39,6 +43,6 @@
   background: transparent;
 }
 .favorites-scroll::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.4);
+  background: rgba(249, 115, 22, 0.4);
   border-radius: 9999px;
 }
