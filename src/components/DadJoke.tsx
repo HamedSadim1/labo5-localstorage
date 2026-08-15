@@ -1,15 +1,16 @@
 /** Main component for the Dad Joke application. */
-import { getJokeText } from "../services/JokesData";
-import { useDarkMode } from "../hooks/useDarkMode";
-import { useFavorites } from "../hooks/useFavorites";
-import { useJoke } from "../hooks/useJoke";
-import { useNotice } from "../hooks/useNotice";
-import { NOTICES } from "../config";
-import Header from "./Header";
-import JokeCard from "./JokeCard";
-import FavoritesList from "./FavoritesList";
-import Footer from "./Footer";
-import { Toast } from "./Toast";
+import { cn } from "@/utils/cn";
+import { getJokeText } from "@/services/JokesData";
+import { useDarkMode } from "@/hooks/useDarkMode";
+import { useFavorites } from "@/hooks/useFavorites";
+import { useJoke } from "@/hooks/useJoke";
+import { useNotice } from "@/hooks/useNotice";
+import { NOTICES } from "@/config";
+import Header from "@/components/Header";
+import JokeCard from "@/components/JokeCard";
+import FavoritesList from "@/components/FavoritesList";
+import Footer from "@/components/Footer";
+import { Toast } from "@/components/Toast";
 
 /** Main component rendering the dad joke app. */
 const DadJoke = () => {
@@ -34,9 +35,10 @@ const DadJoke = () => {
 
   return (
     <div
-      className={`${
-        darkMode ? "bg-[#0b0c0f]" : "bg-[#faf6f0]"
-      } relative min-h-screen overflow-hidden transition-colors duration-300`}
+      className={cn(
+        darkMode ? "bg-[#0b0c0f]" : "bg-[#faf6f0]",
+        "relative min-h-screen overflow-hidden transition-colors duration-300"
+      )}
     >
       {/* Warm decorative glows */}
       <div

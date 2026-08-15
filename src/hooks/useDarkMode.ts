@@ -1,8 +1,8 @@
 /** Custom hook for managing dark mode state, persisted to localStorage. */
 import { useLayoutEffect } from "react";
-import { usePersistedState } from "./usePersistedState";
-import { STORAGE_KEYS } from "../config";
-import { systemPrefersDark } from "../utils/theme";
+import { usePersistedState } from "@/hooks/usePersistedState";
+import { STORAGE_KEYS } from "@/config";
+import { systemPrefersDark } from "@/utils/theme";
 
 /** Parses the persisted value, falling back to the system preference. */
 const parseDarkMode = (raw: string | null): boolean =>

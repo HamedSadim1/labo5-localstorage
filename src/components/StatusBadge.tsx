@@ -1,5 +1,6 @@
 /** Status pill showing the current fetch state. */
 import React from "react";
+import { cn } from "@/utils/cn";
 
 export type JokeStatus = "loading" | "error" | "live";
 
@@ -35,10 +36,13 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${style.wrap}`}
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium",
+        style.wrap
+      )}
     >
       <span
-        className={`h-1.5 w-1.5 rounded-full ${style.dot}`}
+        className={cn("h-1.5 w-1.5 rounded-full", style.dot)}
         aria-hidden="true"
       />
       {style.label}

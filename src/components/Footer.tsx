@@ -1,6 +1,6 @@
 /** Footer component displaying credits and link to the joke API. */
 import React from "react";
-import { API_BASE_URL } from "../config";
+import { API_BASE_URL } from "@/config";
 
 /** Renders a subtle footer with API credits. */
 const Footer: React.FC = () => {

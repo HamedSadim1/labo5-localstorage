@@ -1,8 +1,8 @@
 /** Hook for copying text with transient "copied"/"failed" feedback. */
 import { useCallback, useState } from "react";
-import { copyText } from "../utils/clipboard";
-import { useTimeout } from "./useTimeout";
-import { COPY_FEEDBACK_MS } from "../config";
+import { copyText } from "@/utils/clipboard";
+import { useTimeout } from "@/hooks/useTimeout";
+import { COPY_FEEDBACK_MS } from "@/config";
 
 /** Returns a copy function plus copied/failed checks for a given id. */
 export const useCopy = (duration = COPY_FEEDBACK_MS) => {

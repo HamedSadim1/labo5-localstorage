@@ -4,7 +4,7 @@ import {
   GROAN_HASH_MULTIPLIER,
   GROAN_SCORE_MAX,
   GROAN_SMIRK_MAX,
-} from "../config";
+} from "@/config";
 
 /** Stable pseudo-rating (0-100) derived from the joke text. */
 export const groanScore = (text: string): number => {

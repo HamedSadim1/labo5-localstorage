@@ -1,9 +1,9 @@
 /** Hook for fetching and managing the current joke. */
 import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import type { Joke } from "../services/JokesData";
-import { fetchJoke } from "../utils/api";
-import { ERROR_MESSAGES, HTTP_TOO_MANY_REQUESTS } from "../config";
+import type { Joke } from "@/services/JokesData";
+import { fetchJoke } from "@/utils/api";
+import { ERROR_MESSAGES, HTTP_TOO_MANY_REQUESTS } from "@/config";
 
 /** Returns the current joke, its load state, and a function to fetch a new one. */
 export const useJoke = () => {

@@ -1,9 +1,9 @@
 /** Button that copies text to the clipboard with transient feedback. */
 import React, { useEffect } from "react";
-import { useCopy } from "../hooks/useCopy";
-import { Button } from "./Button";
-import { CheckIcon, CopyIcon, XIcon } from "./icons";
-import { COPY_FEEDBACK_MS } from "../config";
+import { useCopy } from "@/hooks/useCopy";
+import { Button } from "@/components/Button";
+import { CheckIcon, CopyIcon, XIcon } from "@/components/icons";
+import { COPY_FEEDBACK_MS } from "@/config";
 
 type ButtonVariant = React.ComponentProps<typeof Button>["variant"];
 type ButtonSize = React.ComponentProps<typeof Button>["size"];

@@ -1,7 +1,7 @@
 /** Header component with the app branding, hero section and dark mode toggle. */
 import React from "react";
-import { Button } from "./Button";
-import { LogoIcon, MoonIcon, SparklesIcon, SunIcon } from "./icons";
+import { Button } from "@/components/Button";
+import { LogoIcon, MoonIcon, SparklesIcon, SunIcon } from "@/components/icons";
 
 interface HeaderProps {
   darkMode: boolean;

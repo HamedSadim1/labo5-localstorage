@@ -40,6 +40,18 @@ export default tseslint.config(
       "eqeqeq": "error",
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/consistent-type-imports": "error",
+      // Enforce the `@/` path alias instead of relative imports.
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["./**", "../**"],
+              message: "Use the \"@/\" path alias instead of relative imports.",
+            },
+          ],
+        },
+      ],
     },
   },
 );

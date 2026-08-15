@@ -1,7 +1,7 @@
 /** Hook for state that is persisted to localStorage (single source of truth). */
 import { useEffect, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import { storageGet, storageSet } from "../utils/storage";
+import { storageGet, storageSet } from "@/utils/storage";
 
 interface PersistedStateOptions<T> {
   key: string;

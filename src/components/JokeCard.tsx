@@ -1,16 +1,17 @@
 /** Component for displaying the current joke with actions to favorite, copy, or get a new one. */
 import React from "react";
-import type { Joke } from "../services/JokesData";
-import { getJokeText } from "../services/JokesData";
-import { Card, PANEL_CLASSES } from "./Card";
-import { CopyButton } from "./CopyButton";
-import { Button } from "./Button";
-import { Skeleton } from "./Skeleton";
-import { GroanMeter } from "./GroanMeter";
-import { StatusBadge } from "./StatusBadge";
-import type { JokeStatus } from "./StatusBadge";
-import { CaretRightIcon, HeartIcon, RefreshIcon } from "./icons";
-import { groanScore } from "../utils/groan";
+import { cn } from "@/utils/cn";
+import type { Joke } from "@/services/JokesData";
+import { getJokeText } from "@/services/JokesData";
+import { Card, PANEL_CLASSES } from "@/components/Card";
+import { CopyButton } from "@/components/CopyButton";
+import { Button } from "@/components/Button";
+import { Skeleton } from "@/components/Skeleton";
+import { GroanMeter } from "@/components/GroanMeter";
+import { StatusBadge } from "@/components/StatusBadge";
+import type { JokeStatus } from "@/components/StatusBadge";
+import { CaretRightIcon, HeartIcon, RefreshIcon } from "@/components/icons";
+import { groanScore } from "@/utils/groan";
 
 const MICRO_LABEL_CLASSES =
   "text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-700 dark:text-orange-400";
@@ -53,7 +54,11 @@ const JokeCard: React.FC<JokeCardProps> = ({
         </div>
 
         <div
-          className={`flex min-h-36 items-center justify-center ${PANEL_CLASSES} px-6 py-6 text-center`}
+          className={cn(
+            "flex min-h-36 items-center justify-center",
+            PANEL_CLASSES,
+            "px-6 py-6 text-center"
+          )}
           aria-live="polite"
         >
           {isInitialLoad ? (
@@ -82,7 +87,10 @@ const JokeCard: React.FC<JokeCardProps> = ({
           ) : (
             <div>
               <div
-                className={`mb-3 flex items-center justify-center gap-1.5 ${MICRO_LABEL_CLASSES}`}
+                className={cn(
+                  "mb-3 flex items-center justify-center gap-1.5",
+                  MICRO_LABEL_CLASSES
+                )}
               >
                 <CaretRightIcon className="h-3 w-3" /> Setup / Punchline
               </div>
@@ -94,7 +102,10 @@ const JokeCard: React.FC<JokeCardProps> = ({
               </p>
               {jokeText && (
                 <span
-                  className={`mt-4 inline-block rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 ${MICRO_LABEL_CLASSES}`}
+                  className={cn(
+                    "mt-4 inline-block rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1",
+                    MICRO_LABEL_CLASSES
+                  )}
                 >
                   Ba-dum-tss
                 </span>
@@ -126,7 +137,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         <Button variant="primary" onClick={onNewJoke} disabled={isLoading}>
           <RefreshIcon
-            className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+            className={cn("h-4 w-4", isLoading && "animate-spin")}
           />
           {isLoading ? "Loading…" : "New Joke"}
         </Button>

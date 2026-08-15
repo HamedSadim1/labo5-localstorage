@@ -1,7 +1,7 @@
 /** Groan-o-Meter: a rating gauge derived from a joke's groan score. */
 import React from "react";
-import { groanLabel } from "../utils/groan";
-import { GROAN_SCORE_MAX } from "../config";
+import { groanLabel } from "@/utils/groan";
+import { GROAN_SCORE_MAX } from "@/config";
 
 interface GroanMeterProps {
   score: number;

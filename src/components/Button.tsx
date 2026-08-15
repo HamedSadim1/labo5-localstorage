@@ -1,5 +1,6 @@
 /** Reusable button component with shared variants and sizes. */
 import React from "react";
+import { cn } from "@/utils/cn";
 
 type ButtonVariant =
   | "primary"
@@ -51,7 +52,12 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       type={type}
-      className={`inline-flex items-center justify-center gap-1.5 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      className={cn(
+        "inline-flex items-center justify-center gap-1.5 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50",
+        variantClasses[variant],
+        sizeClasses[size],
+        className
+      )}
       {...rest}
     >
       {children}

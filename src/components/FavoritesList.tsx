@@ -1,15 +1,16 @@
 /** Component for displaying and managing the list of favorite jokes. */
 import React, { useEffect, useRef, useState } from "react";
-import { Card, PANEL_CLASSES } from "./Card";
-import { CopyButton } from "./CopyButton";
-import { Button } from "./Button";
-import { FrownIcon, XIcon } from "./icons";
-import { useTimeout } from "../hooks/useTimeout";
+import { cn } from "@/utils/cn";
+import { Card, PANEL_CLASSES } from "@/components/Card";
+import { CopyButton } from "@/components/CopyButton";
+import { Button } from "@/components/Button";
+import { FrownIcon, XIcon } from "@/components/icons";
+import { useTimeout } from "@/hooks/useTimeout";
 import {
   CONFIRM_RESET_MS,
   COPY_FEEDBACK_MS,
   FAVORITE_HIGHLIGHT_MS,
-} from "../config";
+} from "@/config";
 
 interface FavoritesListProps {
   favorites: string[];
@@ -94,9 +95,12 @@ const FavoritesList: React.FC<FavoritesListProps> = ({
           {favorites.map((fav) => (
             <li
               key={fav}
-              className={`flex items-start justify-between gap-3 ${PANEL_CLASSES} p-4 transition-all duration-300 ${
-                highlighted === fav ? "ring-2 ring-orange-400/60" : ""
-              }`}
+              className={cn(
+                "flex items-start justify-between gap-3",
+                PANEL_CLASSES,
+                "p-4 transition-all duration-300",
+                highlighted === fav && "ring-2 ring-orange-400/60"
+              )}
             >
               <p className="flex-1 font-serif text-sm italic leading-relaxed text-zinc-800 dark:text-zinc-100">
                 “{fav}”

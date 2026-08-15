@@ -1,5 +1,6 @@
 /** Shared card shell and panel class strings. */
 import React from "react";
+import { cn } from "@/utils/cn";
 
 const CARD_CLASSES =
   "rounded-3xl border border-orange-950/10 bg-white/80 p-6 shadow-xl shadow-orange-900/5 backdrop-blur-xl dark:border-white/10 dark:bg-[#141519] dark:shadow-black/30 sm:p-8";
@@ -17,7 +18,7 @@ export const Card: React.FC<CardProps> = ({
   children,
   ...rest
 }) => (
-  <section className={`${CARD_CLASSES} ${className}`} {...rest}>
+  <section className={cn(CARD_CLASSES, className)} {...rest}>
     {children}
   </section>
 );
