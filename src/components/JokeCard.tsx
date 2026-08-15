@@ -3,6 +3,7 @@ import React from "react";
 import { Joke } from "../services/JokesData";
 import { useCopy } from "../hooks/useCopy";
 import { Button } from "./Button";
+import { Skeleton } from "./Skeleton";
 import {
   CaretRightIcon,
   CheckIcon,
@@ -69,14 +70,20 @@ const JokeCard: React.FC<JokeCardProps> = ({
         <div
           className="flex min-h-36 items-center justify-center rounded-2xl border border-orange-950/10 bg-orange-50/60 px-6 py-6 text-center dark:border-white/10 dark:bg-black/30"
           aria-live="polite"
+          aria-busy={isLoading}
         >
           {isLoading ? (
-            <div className="flex items-center gap-3 text-zinc-500 dark:text-zinc-400">
-              <span
-                className="h-5 w-5 animate-spin rounded-full border-2 border-orange-500/40 border-t-orange-500"
-                aria-hidden="true"
-              />
-              <span>Fetching a joke…</span>
+            <div className="w-full">
+              <div className="mb-4 flex justify-center">
+                <Skeleton className="h-3 w-32 rounded-full" />
+              </div>
+              <div className="space-y-2.5">
+                <Skeleton className="mx-auto h-4 w-11/12 rounded" />
+                <Skeleton className="mx-auto h-4 w-3/4 rounded" />
+              </div>
+              <div className="mt-4 flex justify-center">
+                <Skeleton className="h-6 w-24 rounded-full" />
+              </div>
             </div>
           ) : error ? (
             <p className="text-rose-500 dark:text-rose-400">{error}</p>
@@ -98,31 +105,46 @@ const JokeCard: React.FC<JokeCardProps> = ({
           )}
         </div>
 
-        {!isLoading && !error && jokeText && (
-          <div className="mt-6">
-            <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.2em]">
-              <span className="text-zinc-500">Groan-o-Meter</span>
-              <span className="text-orange-500 dark:text-orange-400">
-                {label}
-              </span>
+        <div className="mt-6">
+          {isLoading ? (
+            <div aria-hidden="true">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-3 w-32 rounded-full" />
+                <Skeleton className="h-3 w-20 rounded-full" />
+              </div>
+              <div className="mt-2 h-1.5 rounded-full bg-zinc-200 dark:bg-white/10" />
+              <div className="mt-1.5 flex justify-between">
+                <Skeleton className="h-2.5 w-10 rounded-full" />
+                <Skeleton className="h-2.5 w-8 rounded-full" />
+                <Skeleton className="h-2.5 w-16 rounded-full" />
+              </div>
             </div>
-            <div className="relative mt-2 h-1.5 rounded-full bg-zinc-200 dark:bg-white/10">
-              <div
-                className="absolute inset-y-0 left-0 rounded-full bg-linear-to-r from-amber-400 to-orange-500"
-                style={{ width: `${score}%` }}
-              />
-              <div
-                className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-orange-500 dark:border-[#141519]"
-                style={{ left: `${score}%` }}
-              />
+          ) : !error && jokeText ? (
+            <div>
+              <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.2em]">
+                <span className="text-zinc-500">Groan-o-Meter</span>
+                <span className="text-orange-500 dark:text-orange-400">
+                  {label}
+                </span>
+              </div>
+              <div className="relative mt-2 h-1.5 rounded-full bg-zinc-200 dark:bg-white/10">
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full bg-linear-to-r from-amber-400 to-orange-500"
+                  style={{ width: `${score}%` }}
+                />
+                <div
+                  className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-orange-500 dark:border-[#141519]"
+                  style={{ left: `${score}%` }}
+                />
+              </div>
+              <div className="mt-1.5 flex justify-between text-[10px] uppercase tracking-wider text-zinc-400 dark:text-zinc-600">
+                <span>Smirk</span>
+                <span>Sigh</span>
+                <span>Full eye-roll</span>
+              </div>
             </div>
-            <div className="mt-1.5 flex justify-between text-[10px] uppercase tracking-wider text-zinc-400 dark:text-zinc-600">
-              <span>Smirk</span>
-              <span>Sigh</span>
-              <span>Full eye-roll</span>
-            </div>
-          </div>
-        )}
+          ) : null}
+        </div>
       </div>
 
       <div className="mt-6 flex flex-wrap justify-center gap-3">
