@@ -30,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
 
         <Button
           variant="icon"
-          size="iconLg"
+          size="icon"
           aria-pressed={darkMode}
           aria-label={
             darkMode ? "Switch to light mode" : "Switch to dark mode"

@@ -35,7 +35,14 @@ export const useCopy = (duration = 2000) => {
     [failedId]
   );
 
+  /** Clears any copied/failed feedback immediately. */
+  const reset = useCallback(() => {
+    window.clearTimeout(timer.current);
+    setCopiedId(null);
+    setFailedId(null);
+  }, []);
+
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
-  return { copy, isCopied, isFailed };
+  return { copy, isCopied, isFailed, reset };
 };

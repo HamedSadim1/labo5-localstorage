@@ -1,5 +1,5 @@
 /** Component for displaying the current joke with actions to favorite, copy, or get a new one. */
-import React from "react";
+import React, { useEffect } from "react";
 import { Joke } from "../services/JokesData";
 import { useCopy } from "../hooks/useCopy";
 import { Button } from "./Button";
@@ -73,8 +73,13 @@ const JokeCard: React.FC<JokeCardProps> = ({
   onNewJoke,
   isFavorite,
 }) => {
-  const { copy, isCopied, isFailed } = useCopy();
+  const { copy, isCopied, isFailed, reset } = useCopy();
   const jokeText = joke?.attachments?.[0]?.text ?? "";
+
+  // Clear copy feedback whenever a new joke loads so it never shows stale text.
+  useEffect(() => {
+    reset();
+  }, [jokeId, reset]);
   const score = groanScore(jokeText);
   const label = groanLabel(score);
 
@@ -91,7 +96,6 @@ const JokeCard: React.FC<JokeCardProps> = ({
             Random Joke
           </h2>
           <span
-            role="status"
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyle.wrap}`}
           >
             <span
@@ -105,7 +109,6 @@ const JokeCard: React.FC<JokeCardProps> = ({
         <div
           className="flex min-h-36 items-center justify-center rounded-2xl border border-orange-950/10 bg-orange-50/60 px-6 py-6 text-center dark:border-white/10 dark:bg-black/30"
           aria-live="polite"
-          aria-busy={isLoading}
         >
           {isInitialLoad ? (
             <>

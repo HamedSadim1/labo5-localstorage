@@ -10,7 +10,7 @@ type ButtonVariant =
   | "icon"
   | "iconDanger";
 
-type ButtonSize = "md" | "sm" | "icon" | "iconLg";
+type ButtonSize = "md" | "sm" | "icon";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -36,8 +36,7 @@ const variantClasses: Record<ButtonVariant, string> = {
 const sizeClasses: Record<ButtonSize, string> = {
   md: "rounded-full px-4 py-2.5 text-sm font-semibold",
   sm: "rounded-full px-3 py-1.5 text-xs font-semibold",
-  icon: "h-10 w-10 rounded-full",
-  iconLg: "h-11 w-11 rounded-full",
+  icon: "h-11 w-11 rounded-full",
 };
 
 /** Renders a themed button. */
@@ -52,7 +51,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       type={type}
-      className={`inline-flex items-center justify-center gap-1.5 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#141519] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-1.5 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       {...rest}
     >
       {children}

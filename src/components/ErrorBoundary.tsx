@@ -32,12 +32,12 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#0b0c0f] px-6 text-center">
-          <FrownIcon className="h-10 w-10 text-orange-400" />
-          <h1 className="text-xl font-semibold text-zinc-100">
+        <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#faf6f0] px-6 text-center dark:bg-[#0b0c0f]">
+          <FrownIcon className="h-10 w-10 text-orange-500" />
+          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
             Something went wrong
           </h1>
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
             An unexpected error occurred. Please reload the page.
           </p>
           <Button variant="primary" onClick={() => window.location.reload()}>

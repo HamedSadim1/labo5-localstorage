@@ -26,15 +26,24 @@ export const useFavorites = () => {
   const [favorites, setFavorites] = useState<string[]>(loadFavorites);
 
   useEffect(() => {
-    storageSet(STORAGE_KEY, JSON.stringify(favorites));
+    if (!storageSet(STORAGE_KEY, JSON.stringify(favorites))) {
+      console.warn("Favorites could not be persisted to localStorage.");
+    }
   }, [favorites]);
 
-  /** Adds a joke to favorites if not already present and under the cap. */
-  const addFavorite = (joke: string) => {
+  /**
+   * Adds a joke to favorites if not already present and under the cap.
+   * Returns true when the joke was actually added.
+   */
+  const addFavorite = (joke: string): boolean => {
+    if (favorites.includes(joke) || favorites.length >= MAX_FAVORITES) {
+      return false;
+    }
     setFavorites((prev) => {
       if (prev.includes(joke) || prev.length >= MAX_FAVORITES) return prev;
       return [...prev, joke];
     });
+    return true;
   };
 
   /** Removes a favorite joke by its text. */

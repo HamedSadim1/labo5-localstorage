@@ -15,7 +15,9 @@ const DadJoke = () => {
   const [jokeId, setJokeId] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const noticeTimer = useRef<number | undefined>(undefined);
   const { darkMode, toggleDarkMode } = useDarkMode();
   const { favorites, addFavorite, removeFavorite, clearFavorites } =
     useFavorites();
@@ -55,14 +57,23 @@ const DadJoke = () => {
     return () => abortRef.current?.abort();
   }, [loadJoke]);
 
+  useEffect(() => () => window.clearTimeout(noticeTimer.current), []);
+
+  /** Shows a transient toast message that auto-dismisses. */
+  const showNotice = (message: string) => {
+    setNotice(message);
+    window.clearTimeout(noticeTimer.current);
+    noticeTimer.current = window.setTimeout(() => setNotice(null), 3000);
+  };
+
   /** Toggles the current joke in/out of favorites. */
   const handleToggleFavorite = (): void => {
     const text = joke?.attachments?.[0]?.text;
     if (!text) return;
     if (favorites.includes(text)) {
       removeFavorite(text);
-    } else {
-      addFavorite(text);
+    } else if (!addFavorite(text)) {
+      showNotice("Favorites are full — remove one first.");
     }
   };
 
@@ -88,7 +99,7 @@ const DadJoke = () => {
       <div className="relative mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-orange-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#1a1205]"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-orange-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#1a1205]"
         >
           Skip to content
         </a>
@@ -114,6 +125,15 @@ const DadJoke = () => {
         </main>
         <Footer />
       </div>
+
+      {notice && (
+        <div
+          role="status"
+          className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full border border-orange-500/40 bg-white px-4 py-2 text-sm font-medium text-orange-700 shadow-lg dark:bg-[#141519] dark:text-orange-300"
+        >
+          {notice}
+        </div>
+      )}
     </div>
   );
 };
