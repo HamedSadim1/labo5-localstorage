@@ -4,13 +4,13 @@ import React from "react";
 /** Renders a subtle footer with API credits. */
 const Footer: React.FC = () => {
   return (
-    <footer className="mt-10 text-center text-sm text-zinc-400 dark:text-zinc-600">
+    <footer className="mt-10 text-center text-sm text-zinc-600 dark:text-zinc-400">
       Powered by{" "}
       <a
         href="https://icanhazdadjoke.com"
         target="_blank"
         rel="noreferrer"
-        className="font-medium text-orange-500 transition-colors hover:text-orange-400 hover:underline dark:text-orange-400 dark:hover:text-orange-300"
+        className="font-medium text-orange-700 transition-colors hover:text-orange-600 hover:underline dark:text-orange-400 dark:hover:text-orange-300"
       >
         icanhazdadjoke.com
       </a>

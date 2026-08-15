@@ -16,10 +16,34 @@ interface JokeCardProps {
   joke: Joke | null;
   isLoading: boolean;
   error: string | null;
-  onFavorite: () => void;
+  onToggleFavorite: () => void;
   onNewJoke: () => void;
   isFavorite: boolean;
 }
+
+type JokeStatus = "loading" | "offline" | "live";
+
+/** Visual treatment for each fetch status. */
+const statusConfig: Record<
+  JokeStatus,
+  { wrap: string; dot: string; label: string }
+> = {
+  loading: {
+    wrap: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+    dot: "bg-amber-500",
+    label: "Loading",
+  },
+  offline: {
+    wrap: "bg-rose-500/10 text-rose-700 dark:text-rose-400",
+    dot: "bg-rose-500",
+    label: "Offline",
+  },
+  live: {
+    wrap: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+    dot: "bg-emerald-500",
+    label: "Live",
+  },
+};
 
 /** Stable pseudo-rating (0-100) derived from the joke text. */
 const groanScore = (text: string): number => {
@@ -42,14 +66,17 @@ const JokeCard: React.FC<JokeCardProps> = ({
   joke,
   isLoading,
   error,
-  onFavorite,
+  onToggleFavorite,
   onNewJoke,
   isFavorite,
 }) => {
   const { copy, isCopied } = useCopy();
-  const jokeText = joke?.attachments[0].text ?? "";
+  const jokeText = joke?.attachments[0]?.text ?? "";
   const score = groanScore(jokeText);
   const label = groanLabel(score);
+
+  const status: JokeStatus = isLoading ? "loading" : error ? "offline" : "live";
+  const statusStyle = statusConfig[status];
 
   return (
     <section className="flex flex-col justify-between rounded-3xl border border-orange-950/10 bg-white/80 p-6 shadow-xl shadow-orange-900/5 backdrop-blur-xl dark:border-white/10 dark:bg-[#141519] dark:shadow-black/30 sm:p-8">
@@ -58,12 +85,14 @@ const JokeCard: React.FC<JokeCardProps> = ({
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             Random Joke
           </h2>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyle.wrap}`}
+          >
             <span
-              className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+              className={`h-1.5 w-1.5 rounded-full ${statusStyle.dot}`}
               aria-hidden="true"
             />
-            Live
+            {statusStyle.label}
           </span>
         </div>
 
@@ -73,34 +102,44 @@ const JokeCard: React.FC<JokeCardProps> = ({
           aria-busy={isLoading}
         >
           {isLoading ? (
-            <div className="w-full">
-              <div className="mb-4 flex justify-center">
-                <Skeleton className="h-3 w-32 rounded-full" />
+            <>
+              <span className="sr-only">Loading a joke…</span>
+              <div className="w-full" aria-hidden="true">
+                <div className="mb-4 flex justify-center">
+                  <Skeleton className="h-3 w-32 rounded-full" />
+                </div>
+                <div className="space-y-2.5">
+                  <Skeleton className="mx-auto h-4 w-11/12 rounded" />
+                  <Skeleton className="mx-auto h-4 w-3/4 rounded" />
+                </div>
+                <div className="mt-4 flex justify-center">
+                  <Skeleton className="h-6 w-24 rounded-full" />
+                </div>
               </div>
-              <div className="space-y-2.5">
-                <Skeleton className="mx-auto h-4 w-11/12 rounded" />
-                <Skeleton className="mx-auto h-4 w-3/4 rounded" />
-              </div>
-              <div className="mt-4 flex justify-center">
-                <Skeleton className="h-6 w-24 rounded-full" />
-              </div>
-            </div>
+            </>
           ) : error ? (
-            <p className="text-rose-500 dark:text-rose-400">{error}</p>
+            <div className="flex flex-col items-center gap-3">
+              <p className="text-rose-600 dark:text-rose-400">{error}</p>
+              <Button variant="secondary" size="sm" onClick={onNewJoke}>
+                Try again
+              </Button>
+            </div>
           ) : (
             <div>
-              <div className="mb-3 flex items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-500 dark:text-orange-400">
+              <div className="mb-3 flex items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-700 dark:text-orange-400">
                 <CaretRightIcon className="h-3 w-3" /> Setup / Punchline
               </div>
               <p
                 key={jokeText}
                 className="animate-fade-in font-serif text-lg italic leading-relaxed text-zinc-900 dark:text-zinc-100 sm:text-xl"
               >
-                {jokeText}
+                {jokeText || "This joke is too shy — try another one."}
               </p>
-              <span className="mt-4 inline-block rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-500 dark:text-orange-400">
-                Ba-dum-tss
-              </span>
+              {jokeText && (
+                <span className="mt-4 inline-block rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-700 dark:text-orange-400">
+                  Ba-dum-tss
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -120,10 +159,12 @@ const JokeCard: React.FC<JokeCardProps> = ({
               </div>
             </div>
           ) : !error && jokeText ? (
-            <div>
+            <div role="img" aria-label={`Groan level: ${label}`}>
               <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.2em]">
-                <span className="text-zinc-500">Groan-o-Meter</span>
-                <span className="text-orange-500 dark:text-orange-400">
+                <span className="text-zinc-600 dark:text-zinc-400">
+                  Groan-o-Meter
+                </span>
+                <span className="text-orange-700 dark:text-orange-400">
                   {label}
                 </span>
               </div>
@@ -134,10 +175,10 @@ const JokeCard: React.FC<JokeCardProps> = ({
                 />
                 <div
                   className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-orange-500 dark:border-[#141519]"
-                  style={{ left: `${score}%` }}
+                  style={{ left: `clamp(7px, ${score}%, calc(100% - 7px))` }}
                 />
               </div>
-              <div className="mt-1.5 flex justify-between text-[10px] uppercase tracking-wider text-zinc-400 dark:text-zinc-600">
+              <div className="mt-1.5 flex justify-between text-[10px] uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
                 <span>Smirk</span>
                 <span>Sigh</span>
                 <span>Full eye-roll</span>
@@ -171,11 +212,12 @@ const JokeCard: React.FC<JokeCardProps> = ({
         </Button>
         <Button
           variant={isFavorite ? "accent" : "favorite"}
-          onClick={onFavorite}
-          disabled={!joke || isFavorite}
+          aria-pressed={isFavorite}
+          onClick={onToggleFavorite}
+          disabled={!joke}
         >
           <HeartIcon filled={isFavorite} className="h-4 w-4" />
-          {isFavorite ? "Favorited" : "Favorite"}
+          Favorite
         </Button>
       </div>
     </section>

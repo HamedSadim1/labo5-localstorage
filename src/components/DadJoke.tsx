@@ -27,7 +27,11 @@ const DadJoke = () => {
       setJoke(newJoke);
     } catch (err) {
       console.error("Error loading joke:", err);
-      setError("Couldn't load a joke. Please try again.");
+      setError(
+        navigator.onLine
+          ? "Couldn't load a joke. Please try again."
+          : "You're offline. Check your connection and try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -37,17 +41,20 @@ const DadJoke = () => {
     loadJoke();
   }, [loadJoke]);
 
-  /** Adds the current joke to favorites. */
-  const handleFavoriteJoke = (): void => {
-    if (joke?.attachments[0].text) {
-      addFavorite(joke.attachments[0].text);
+  /** Toggles the current joke in/out of favorites. */
+  const handleToggleFavorite = (): void => {
+    const text = joke?.attachments[0]?.text;
+    if (!text) return;
+    if (favorites.includes(text)) {
+      removeFavorite(text);
+    } else {
+      addFavorite(text);
     }
   };
 
   // Determine if the current joke is already a favorite
-  const isFavorite: boolean = joke
-    ? favorites.includes(joke.attachments[0].text)
-    : false;
+  const jokeText = joke?.attachments[0]?.text ?? "";
+  const isFavorite: boolean = jokeText !== "" && favorites.includes(jokeText);
 
   return (
     <div
@@ -71,7 +78,7 @@ const DadJoke = () => {
             joke={joke}
             isLoading={isLoading}
             error={error}
-            onFavorite={handleFavoriteJoke}
+            onToggleFavorite={handleToggleFavorite}
             onNewJoke={loadJoke}
             isFavorite={isFavorite}
           />
