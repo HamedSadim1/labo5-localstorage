@@ -14,6 +14,7 @@ import {
 
 interface JokeCardProps {
   joke: Joke | null;
+  jokeId: number;
   isLoading: boolean;
   error: string | null;
   onToggleFavorite: () => void;
@@ -64,6 +65,7 @@ const groanLabel = (score: number): string => {
 /** Renders the joke card with loading/error states and action buttons. */
 const JokeCard: React.FC<JokeCardProps> = ({
   joke,
+  jokeId,
   isLoading,
   error,
   onToggleFavorite,
@@ -130,7 +132,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
                 <CaretRightIcon className="h-3 w-3" /> Setup / Punchline
               </div>
               <p
-                key={jokeText}
+                key={jokeId}
                 className="animate-fade-in font-serif text-lg italic leading-relaxed text-zinc-900 dark:text-zinc-100 sm:text-xl"
               >
                 {jokeText || "This joke is too shy — try another one."}
@@ -178,7 +180,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
                   style={{ left: `clamp(7px, ${score}%, calc(100% - 7px))` }}
                 />
               </div>
-              <div className="mt-1.5 flex justify-between text-[10px] uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
+              <div className="mt-1.5 flex flex-wrap justify-between gap-x-2 text-[10px] uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
                 <span>Smirk</span>
                 <span>Sigh</span>
                 <span>Full eye-roll</span>

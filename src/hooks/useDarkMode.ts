@@ -1,5 +1,5 @@
 /** Custom hook for managing dark mode state, persisted to localStorage. */
-import { useState, useEffect } from "react";
+import { useState, useLayoutEffect } from "react";
 
 const STORAGE_KEY = "darkMode";
 
@@ -13,7 +13,8 @@ export const useDarkMode = () => {
     return true;
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
     localStorage.setItem(STORAGE_KEY, String(darkMode));
   }, [darkMode]);
 

@@ -1,5 +1,5 @@
 /** Main component for the Dad Joke application, handling joke fetching, favorites, and dark mode. */
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Joke } from "../services/JokesData";
 import { useDarkMode } from "../hooks/useDarkMode";
 import { useFavorites } from "../hooks/useFavorites";
@@ -12,8 +12,10 @@ import Footer from "./Footer";
 /** Main component rendering the dad joke app. */
 const DadJoke = () => {
   const [joke, setJoke] = useState<Joke | null>(null);
+  const [jokeId, setJokeId] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const { darkMode, toggleDarkMode } = useDarkMode();
   const { favorites, addFavorite, removeFavorite, clearFavorites } =
     useFavorites();
@@ -22,10 +24,15 @@ const DadJoke = () => {
   const loadJoke = useCallback(async () => {
     setIsLoading(true);
     setError(null);
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
-      const newJoke = await fetchJoke();
+      const newJoke = await fetchJoke(controller.signal);
       setJoke(newJoke);
+      setJokeId((id) => id + 1);
     } catch (err) {
+      if ((err as { code?: string })?.code === "ERR_CANCELED") return;
       console.error("Error loading joke:", err);
       setError(
         navigator.onLine
@@ -33,12 +40,15 @@ const DadJoke = () => {
           : "You're offline. Check your connection and try again."
       );
     } finally {
-      setIsLoading(false);
+      if (abortRef.current === controller) {
+        setIsLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
     loadJoke();
+    return () => abortRef.current?.abort();
   }, [loadJoke]);
 
   /** Toggles the current joke in/out of favorites. */
@@ -59,7 +69,7 @@ const DadJoke = () => {
   return (
     <div
       className={`${
-        darkMode ? "dark bg-[#0b0c0f]" : "bg-[#faf6f0]"
+        darkMode ? "bg-[#0b0c0f]" : "bg-[#faf6f0]"
       } relative min-h-screen overflow-hidden transition-colors duration-300`}
     >
       {/* Warm decorative glows */}
@@ -73,9 +83,10 @@ const DadJoke = () => {
 
       <div className="relative mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        <main className="grid items-stretch gap-6 md:grid-cols-2">
+        <main className="grid items-start gap-6 md:grid-cols-2">
           <JokeCard
             joke={joke}
+            jokeId={jokeId}
             isLoading={isLoading}
             error={error}
             onToggleFavorite={handleToggleFavorite}

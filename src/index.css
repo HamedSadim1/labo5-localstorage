@@ -89,3 +89,11 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Match the page background on overscroll */
+html {
+  background-color: #faf6f0;
+}
+html.dark {
+  background-color: #0b0c0f;
+}

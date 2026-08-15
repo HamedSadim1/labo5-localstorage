@@ -18,11 +18,11 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
           <span className="grid h-10 w-10 place-items-center rounded-xl bg-linear-to-br from-amber-400 to-orange-500 shadow-lg shadow-orange-500/25">
             <LogoIcon className="h-5 w-5 text-[#1a1205]" />
           </span>
-          <div className="leading-tight">
+          <div className="min-w-0 leading-tight">
             <span className="block text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
               DadJokes
             </span>
-            <span className="block text-[10px] font-semibold uppercase tracking-[0.25em] text-zinc-600 dark:text-zinc-400">
+            <span className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-zinc-600 dark:text-zinc-400 sm:tracking-[0.25em]">
               Est. every dad, ever
             </span>
           </div>

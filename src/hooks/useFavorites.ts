@@ -3,13 +3,16 @@ import { useState, useEffect } from "react";
 
 const STORAGE_KEY = "favoriteJokes";
 
-/** Loads favorites from localStorage, handling legacy string values. */
+/** Loads favorites from localStorage, keeping only strings. */
 const loadFavorites = (): string[] => {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (!saved) return [];
   try {
     const parsed = JSON.parse(saved);
-    return Array.isArray(parsed) ? parsed : [parsed];
+    if (Array.isArray(parsed)) {
+      return parsed.filter((x): x is string => typeof x === "string");
+    }
+    return typeof parsed === "string" ? [parsed] : [];
   } catch {
     // niet JSON, behandel als string
     return [saved];
