@@ -91,6 +91,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
             Random Joke
           </h2>
           <span
+            role="status"
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyle.wrap}`}
           >
             <span
@@ -164,7 +165,13 @@ const JokeCard: React.FC<JokeCardProps> = ({
               </div>
             </div>
           ) : !error && jokeText ? (
-            <div role="img" aria-label={`Groan level: ${label}`}>
+            <div
+              role="meter"
+              aria-label={`Groan level: ${label}`}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={score}
+            >
               <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.2em]">
                 <span className="text-zinc-600 dark:text-zinc-400">
                   Groan-o-Meter
@@ -183,7 +190,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
                   style={{ left: `clamp(7px, ${score}%, calc(100% - 7px))` }}
                 />
               </div>
-              <div className="mt-1.5 flex flex-wrap justify-between gap-x-2 text-[10px] uppercase tracking-wider text-zinc-600 dark:text-zinc-400">
+              <div className="mt-1.5 flex flex-wrap justify-between gap-x-2 text-[11px] uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
                 <span>Smirk</span>
                 <span>Sigh</span>
                 <span>Full eye-roll</span>

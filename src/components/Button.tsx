@@ -35,9 +35,9 @@ const variantClasses: Record<ButtonVariant, string> = {
 
 const sizeClasses: Record<ButtonSize, string> = {
   md: "rounded-full px-4 py-2.5 text-sm font-semibold",
-  sm: "rounded-full px-2 py-1 text-xs font-semibold",
-  icon: "h-8 w-8 rounded-full",
-  iconLg: "h-10 w-10 rounded-full",
+  sm: "rounded-full px-3 py-1.5 text-xs font-semibold",
+  icon: "h-10 w-10 rounded-full",
+  iconLg: "h-11 w-11 rounded-full",
 };
 
 /** Renders a themed button. */

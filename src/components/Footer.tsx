@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
         href="https://icanhazdadjoke.com"
         target="_blank"
         rel="noreferrer"
-        className="font-medium text-orange-700 transition-colors hover:text-orange-600 hover:underline dark:text-orange-400 dark:hover:text-orange-300"
+        className="rounded font-medium text-orange-700 transition-colors hover:text-orange-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:text-orange-400 dark:hover:text-orange-300"
       >
         icanhazdadjoke.com
       </a>

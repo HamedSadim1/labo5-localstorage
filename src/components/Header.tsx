@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
             <span className="block text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
               DadJokes
             </span>
-            <span className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-zinc-600 dark:text-zinc-400 sm:tracking-[0.25em]">
+            <span className="block text-[11px] font-semibold uppercase tracking-[0.15em] text-zinc-600 dark:text-zinc-400 sm:tracking-[0.25em]">
               Est. every dad, ever
             </span>
           </div>

@@ -86,8 +86,17 @@ const DadJoke = () => {
       </div>
 
       <div className="relative mx-auto max-w-5xl px-4 py-10 sm:px-6">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-orange-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#1a1205]"
+        >
+          Skip to content
+        </a>
         <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        <main className="grid items-start gap-6 md:grid-cols-2">
+        <main
+          id="main-content"
+          className="grid items-start gap-6 md:grid-cols-2"
+        >
           <JokeCard
             joke={joke}
             jokeId={jokeId}
