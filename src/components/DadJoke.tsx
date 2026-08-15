@@ -1,72 +1,85 @@
-/** Main component for the Dad Joke application, handling joke fetching, favorites, and dark mode. */
-import React, { useState, useEffect } from "react";
-import { Joke } from "../services/JokesData";
-import { useDarkMode } from "../hooks/useDarkMode";
-import { useFavorites } from "../hooks/useFavorites";
-import { fetchJoke } from "../utils/api";
-import Header from "./Header";
-import JokeCard from "./JokeCard";
-import FavoritesList from "./FavoritesList";
-import Footer from "./Footer";
+/** Main component for the Dad Joke application. */
+import { cn } from "@/utils/cn";
+import { getJokeText } from "@/services/JokesData";
+import { useDarkMode } from "@/hooks/useDarkMode";
+import { useFavorites } from "@/hooks/useFavorites";
+import { useJoke } from "@/hooks/useJoke";
+import { useNotice } from "@/hooks/useNotice";
+import { NOTICES } from "@/config";
+import Header from "@/components/Header";
+import JokeCard from "@/components/JokeCard";
+import FavoritesList from "@/components/FavoritesList";
+import Footer from "@/components/Footer";
+import { Toast } from "@/components/Toast";
 
 /** Main component rendering the dad joke app. */
 const DadJoke = () => {
-  const [joke, setJoke] = useState<Joke | null>(null);
   const { darkMode, toggleDarkMode } = useDarkMode();
-  const { favorites, addFavorite, removeFavorite } = useFavorites();
+  const { favorites, addFavorite, removeFavorite, clearFavorites } =
+    useFavorites();
+  const { joke, jokeId, isLoading, error, loadJoke } = useJoke();
+  const { notice, showNotice } = useNotice();
 
-  /** Fetches and sets a new joke. */
-  const loadJoke = async () => {
-    try {
-      const newJoke = await fetchJoke();
-      setJoke(newJoke);
-    } catch (error) {
-      console.error("Error loading joke:", error);
+  const jokeText = getJokeText(joke);
+  const isFavorite = jokeText !== "" && favorites.includes(jokeText);
+
+  /** Toggles the current joke in/out of favorites. */
+  const handleToggleFavorite = () => {
+    if (!jokeText) return;
+    if (favorites.includes(jokeText)) {
+      removeFavorite(jokeText);
+    } else if (!addFavorite(jokeText)) {
+      showNotice(NOTICES.favoritesFull);
     }
   };
-
-  useEffect(() => {
-    loadJoke();
-  }, []);
-
-  /** Adds the current joke to favorites. */
-  const handleFavoriteJoke = (): void => {
-    if (joke?.attachments[0].text) {
-      addFavorite(joke.attachments[0].text);
-    }
-  };
-
-  /** Loads a new joke. */
-  const handleNewJoke = (): void => {
-    loadJoke();
-  };
-
-  // Determine if the current joke is already a favorite
-  const isFavorite: boolean = joke
-    ? favorites.includes(joke.attachments[0].text)
-    : false;
 
   return (
     <div
-      className={`${
-        darkMode
-          ? "dark bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900"
-          : "bg-linear-to-br from-cyan-100 via-blue-100 to-indigo-100"
-      } min-h-screen transition-all duration-500`}
+      className={cn(
+        darkMode ? "bg-[#0b0c0f]" : "bg-[#faf6f0]",
+        "relative min-h-screen overflow-hidden transition-colors duration-300"
+      )}
     >
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      {/* Warm decorative glows */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <div className="absolute -right-40 -top-40 h-[28rem] w-[28rem] rounded-full bg-orange-500/10 blur-3xl dark:bg-orange-500/10" />
+        <div className="absolute -bottom-40 -left-40 h-[24rem] w-[24rem] rounded-full bg-amber-500/10 blur-3xl dark:bg-amber-500/5" />
+      </div>
+
+      <div className="relative mx-auto max-w-5xl px-4 py-10 sm:px-6">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-orange-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#1a1205]"
+        >
+          Skip to content
+        </a>
         <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        <main className="grid md:grid-cols-2 gap-8">
+        <main
+          id="main-content"
+          className="grid items-start gap-6 md:grid-cols-2"
+        >
           <JokeCard
             joke={joke}
-            onFavorite={handleFavoriteJoke}
-            onNewJoke={handleNewJoke}
+            jokeId={jokeId}
+            isLoading={isLoading}
+            error={error}
+            onToggleFavorite={handleToggleFavorite}
+            onNewJoke={loadJoke}
             isFavorite={isFavorite}
           />
-          <FavoritesList favorites={favorites} onRemove={removeFavorite} />
+          <FavoritesList
+            favorites={favorites}
+            onRemove={removeFavorite}
+            onClear={clearFavorites}
+          />
         </main>
         <Footer />
       </div>
+
+      <Toast message={notice} />
     </div>
   );
 };

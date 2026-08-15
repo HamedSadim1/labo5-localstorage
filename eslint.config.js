@@ -7,11 +7,15 @@ import tseslint from "typescript-eslint";
 export default tseslint.config(
   { ignores: ["dist"] },
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ["src/**/*.{ts,tsx}"],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     plugins: {
       "react-hooks": reactHooks,
@@ -23,6 +27,30 @@ export default tseslint.config(
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
+      ],
+      // Ban `any` explicitly and implicitly (type-aware).
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-unsafe-assignment": "error",
+      "@typescript-eslint/no-unsafe-member-access": "error",
+      "@typescript-eslint/no-unsafe-call": "error",
+      "@typescript-eslint/no-unsafe-return": "error",
+      "@typescript-eslint/no-unsafe-argument": "error",
+      // Strictness and type hygiene.
+      "no-console": ["error", { allow: ["warn", "error"] }],
+      "eqeqeq": "error",
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/consistent-type-imports": "error",
+      // Enforce the `@/` path alias instead of relative imports.
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["./**", "../**"],
+              message: "Use the \"@/\" path alias instead of relative imports.",
+            },
+          ],
+        },
       ],
     },
   },

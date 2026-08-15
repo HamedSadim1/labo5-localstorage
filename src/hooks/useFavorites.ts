@@ -1,43 +1,58 @@
 /** Custom hook for managing favorite jokes stored in localStorage. */
-import { useState, useEffect } from "react";
+import { usePersistedState } from "@/hooks/usePersistedState";
+import { MAX_FAVORITES, STORAGE_KEYS } from "@/config";
 
-/** Returns favorites state and functions to add/remove favorites. */
+/** Parses the persisted value into a string array. */
+const parseFavorites = (raw: string | null): string[] => {
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((x): x is string => typeof x === "string");
+    }
+    return typeof parsed === "string" ? [parsed] : [];
+  } catch {
+    // Not JSON — treat the raw string as a single favorite.
+    return [raw];
+  }
+};
+
+/** Serializes favorites for persistence. */
+const serializeFavorites = (favorites: string[]): string =>
+  JSON.stringify(favorites);
+
+/** Returns favorites state and functions to add/remove/clear favorites. */
 export const useFavorites = () => {
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = usePersistedState<string[]>({
+    key: STORAGE_KEYS.favoriteJokes,
+    parse: parseFavorites,
+    serialize: serializeFavorites,
+  });
 
-  useEffect(() => {
-    const savedFavorites = localStorage.getItem("favoriteJokes");
-    if (savedFavorites) {
-      try {
-        const parsed = JSON.parse(savedFavorites);
-        if (Array.isArray(parsed)) {
-          setFavorites(parsed);
-        } else {
-          // oude string, maak array
-          setFavorites([parsed]);
-        }
-      } catch {
-        // niet JSON, behandel als string
-        setFavorites([savedFavorites]);
-      }
+  /**
+   * Adds a joke to favorites if not already present and under the cap.
+   * Returns true when the joke was actually added.
+   */
+  const addFavorite = (joke: string): boolean => {
+    if (favorites.includes(joke) || favorites.length >= MAX_FAVORITES) {
+      return false;
     }
-  }, []);
-
-  /** Adds a joke to favorites if not already present. */
-  const addFavorite = (joke: string) => {
-    if (!favorites.includes(joke)) {
-      const newFavorites = [...favorites, joke];
-      setFavorites(newFavorites);
-      localStorage.setItem("favoriteJokes", JSON.stringify(newFavorites));
-    }
+    setFavorites((prev) => {
+      if (prev.includes(joke) || prev.length >= MAX_FAVORITES) return prev;
+      return [...prev, joke];
+    });
+    return true;
   };
 
-  /** Removes a favorite joke by index. */
-  const removeFavorite = (index: number) => {
-    const newFavorites = favorites.filter((_, i) => i !== index);
-    setFavorites(newFavorites);
-    localStorage.setItem("favoriteJokes", JSON.stringify(newFavorites));
+  /** Removes a favorite joke by its text. */
+  const removeFavorite = (joke: string) => {
+    setFavorites((prev) => prev.filter((fav) => fav !== joke));
   };
 
-  return { favorites, addFavorite, removeFavorite };
+  /** Removes all favorite jokes. */
+  const clearFavorites = () => {
+    setFavorites([]);
+  };
+
+  return { favorites, addFavorite, removeFavorite, clearFavorites };
 };

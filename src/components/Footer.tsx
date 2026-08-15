@@ -1,21 +1,20 @@
 /** Footer component displaying credits and link to the joke API. */
 import React from "react";
+import { API_BASE_URL } from "@/config";
 
-/** Renders the footer with API credits. */
+/** Renders a subtle footer with API credits. */
 const Footer: React.FC = () => {
   return (
-    <footer className="text-center mt-8">
-      <div className="backdrop-blur-md bg-white/5 dark:bg-black/5 border border-white/10 rounded-xl p-4 shadow-lg">
-        <p className="text-gray-600 dark:text-gray-400 text-sm">
-          Powered by{" "}
-          <a
-            href="https://icanhazdadjoke.com"
-            className="text-blue-400 hover:text-blue-300 transition-colors underline"
-          >
-            icanhazdadjoke.com
-          </a>
-        </p>
-      </div>
+    <footer className="mt-10 text-center text-sm text-zinc-600 dark:text-zinc-400">
+      Powered by{" "}
+      <a
+        href={API_BASE_URL}
+        target="_blank"
+        rel="noreferrer"
+        className="rounded font-medium text-orange-700 transition-colors hover:text-orange-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 dark:text-orange-400 dark:hover:text-orange-300"
+      >
+        icanhazdadjoke.com
+      </a>
     </footer>
   );
 };

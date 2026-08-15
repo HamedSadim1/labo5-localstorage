@@ -1,4 +1,4 @@
-import DadJoke from "./components/DadJoke";
+import DadJoke from "@/components/DadJoke";
 
 function App() {
   return <DadJoke />;

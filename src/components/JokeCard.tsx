@@ -1,47 +1,164 @@
-/** Component for displaying the current joke with options to favorite or get a new one. */
+/** Component for displaying the current joke with actions to favorite, copy, or get a new one. */
 import React from "react";
-import { Joke } from "../services/JokesData";
+import { cn } from "@/utils/cn";
+import type { Joke } from "@/services/JokesData";
+import { getJokeText } from "@/services/JokesData";
+import { Card, PANEL_CLASSES } from "@/components/Card";
+import { CopyButton } from "@/components/CopyButton";
+import { Button } from "@/components/Button";
+import { Skeleton } from "@/components/Skeleton";
+import { GroanMeter } from "@/components/GroanMeter";
+import { StatusBadge } from "@/components/StatusBadge";
+import type { JokeStatus } from "@/components/StatusBadge";
+import { CaretRightIcon, HeartIcon, RefreshIcon } from "@/components/icons";
+import { groanScore } from "@/utils/groan";
+
+const MICRO_LABEL_CLASSES =
+  "text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-700 dark:text-orange-400";
 
 interface JokeCardProps {
   joke: Joke | null;
-  onFavorite: () => void;
+  jokeId: number;
+  isLoading: boolean;
+  error: string | null;
+  onToggleFavorite: () => void;
   onNewJoke: () => void;
   isFavorite: boolean;
 }
 
-/** Renders the joke card with favorite and new joke buttons. */
+/** Renders the joke card with loading/error states and action buttons. */
 const JokeCard: React.FC<JokeCardProps> = ({
   joke,
-  onFavorite,
+  jokeId,
+  isLoading,
+  error,
+  onToggleFavorite,
   onNewJoke,
   isFavorite,
 }) => {
+  const jokeText = getJokeText(joke);
+  const score = groanScore(jokeText);
+
+  // Only show the skeleton on the first load; keep the joke during refreshes.
+  const isInitialLoad = isLoading && !joke;
+  const status: JokeStatus = isLoading ? "loading" : error ? "error" : "live";
+
   return (
-    <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between">
-      <h2 className="text-2xl font-semibold mb-4 text-center text-white dark:text-gray-100">
-        Random Joke
-      </h2>
-      <div className="text-center mb-6">
-        <p className="text-lg italic mb-4 p-4 bg-white/5 dark:bg-black/5 rounded-xl border border-white/10 text-gray-900 dark:text-gray-100 min-h-24 flex items-center justify-center">
-          "{joke?.attachments[0].text}"
-        </p>
-      </div>
-      <div className="flex justify-center space-x-4">
-        <button
-          onClick={onFavorite}
-          className="px-6 py-3 bg-linear-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={!joke || isFavorite}
+    <Card className="flex flex-col justify-between">
+      <div>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+            Random Joke
+          </h2>
+          <StatusBadge status={status} />
+        </div>
+
+        <div
+          className={cn(
+            "flex min-h-36 items-center justify-center",
+            PANEL_CLASSES,
+            "px-6 py-6 text-center"
+          )}
+          aria-live="polite"
         >
-          ❤️ Favorite
-        </button>
-        <button
-          onClick={onNewJoke}
-          className="px-6 py-3 bg-linear-to-r from-blue-500 to-cyan-600 text-white rounded-full hover:from-blue-600 hover:to-cyan-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-        >
-          🔄 New Joke
-        </button>
+          {isInitialLoad ? (
+            <>
+              <span className="sr-only">Loading a joke…</span>
+              <div className="w-full" aria-hidden="true">
+                <div className="mb-4 flex justify-center">
+                  <Skeleton className="h-3 w-32 rounded-full" />
+                </div>
+                <div className="space-y-2.5">
+                  <Skeleton className="mx-auto h-4 w-11/12 rounded" />
+                  <Skeleton className="mx-auto h-4 w-3/4 rounded" />
+                </div>
+                <div className="mt-4 flex justify-center">
+                  <Skeleton className="h-6 w-24 rounded-full" />
+                </div>
+              </div>
+            </>
+          ) : error ? (
+            <div className="flex flex-col items-center gap-3">
+              <p className="text-rose-600 dark:text-rose-400">{error}</p>
+              <Button variant="secondary" size="sm" onClick={onNewJoke}>
+                Try again
+              </Button>
+            </div>
+          ) : (
+            <div>
+              <div
+                className={cn(
+                  "mb-3 flex items-center justify-center gap-1.5",
+                  MICRO_LABEL_CLASSES
+                )}
+              >
+                <CaretRightIcon className="h-3 w-3" /> Setup / Punchline
+              </div>
+              <p
+                key={jokeId}
+                className="animate-fade-in font-serif text-lg italic leading-relaxed text-zinc-900 dark:text-zinc-100 sm:text-xl"
+              >
+                {jokeText || "This joke is too shy — try another one."}
+              </p>
+              {jokeText && (
+                <span
+                  className={cn(
+                    "mt-4 inline-block rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1",
+                    MICRO_LABEL_CLASSES
+                  )}
+                >
+                  Ba-dum-tss
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="mt-6">
+          {isInitialLoad ? (
+            <div aria-hidden="true">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-3 w-32 rounded-full" />
+                <Skeleton className="h-3 w-20 rounded-full" />
+              </div>
+              <div className="mt-2 h-1.5 rounded-full bg-zinc-200 dark:bg-white/10" />
+              <div className="mt-1.5 flex justify-between">
+                <Skeleton className="h-2.5 w-10 rounded-full" />
+                <Skeleton className="h-2.5 w-8 rounded-full" />
+                <Skeleton className="h-2.5 w-16 rounded-full" />
+              </div>
+            </div>
+          ) : !error && jokeText ? (
+            <GroanMeter score={score} />
+          ) : null}
+        </div>
       </div>
-    </div>
+
+      <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <Button variant="primary" onClick={onNewJoke} disabled={isLoading}>
+          <RefreshIcon
+            className={cn("h-4 w-4", isLoading && "animate-spin")}
+          />
+          {isLoading ? "Loading…" : "New Joke"}
+        </Button>
+        <CopyButton
+          text={jokeText}
+          variant="secondary"
+          showLabel
+          resetKey={jokeId}
+          disabled={!jokeText}
+        />
+        <Button
+          variant={isFavorite ? "accent" : "favorite"}
+          aria-pressed={isFavorite}
+          onClick={onToggleFavorite}
+          disabled={!joke}
+        >
+          <HeartIcon filled={isFavorite} className="h-4 w-4" />
+          Favorite
+        </Button>
+      </div>
+    </Card>
   );
 };
 
