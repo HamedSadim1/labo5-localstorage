@@ -1,8 +1,6 @@
 /** Custom hook for managing favorite jokes stored in localStorage. */
 import { usePersistedState } from "./usePersistedState";
-import { STORAGE_KEYS } from "../config";
-
-const MAX_FAVORITES = 100;
+import { MAX_FAVORITES, STORAGE_KEYS } from "../config";
 
 /** Parses the persisted value into a string array. */
 const parseFavorites = (raw: string | null): string[] => {

@@ -6,13 +6,14 @@ import { Card, PANEL_CLASSES } from "./Card";
 import { CopyButton } from "./CopyButton";
 import { Button } from "./Button";
 import { Skeleton } from "./Skeleton";
+import { GroanMeter } from "./GroanMeter";
+import { StatusBadge } from "./StatusBadge";
+import type { JokeStatus } from "./StatusBadge";
 import { CaretRightIcon, HeartIcon, RefreshIcon } from "./icons";
+import { GROAN_HASH_MULTIPLIER, GROAN_SCORE_MAX } from "../config";
 
 const MICRO_LABEL_CLASSES =
   "text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-700 dark:text-orange-400";
-
-const GROAN_SMIRK_MAX = 34;
-const GROAN_CHUCKLE_MAX = 67;
 
 interface JokeCardProps {
   joke: Joke | null;
@@ -24,44 +25,13 @@ interface JokeCardProps {
   isFavorite: boolean;
 }
 
-type JokeStatus = "loading" | "error" | "live";
-
-/** Visual treatment for each fetch status. */
-const statusConfig: Record<
-  JokeStatus,
-  { wrap: string; dot: string; label: string }
-> = {
-  loading: {
-    wrap: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
-    dot: "bg-amber-500",
-    label: "Loading",
-  },
-  error: {
-    wrap: "bg-rose-500/10 text-rose-700 dark:text-rose-400",
-    dot: "bg-rose-500",
-    label: "Error",
-  },
-  live: {
-    wrap: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
-    dot: "bg-emerald-500",
-    label: "Live",
-  },
-};
-
 /** Stable pseudo-rating (0-100) derived from the joke text. */
 const groanScore = (text: string): number => {
   let hash = 0;
   for (let i = 0; i < text.length; i++) {
-    hash = (hash * 31 + text.charCodeAt(i)) | 0;
+    hash = (hash * GROAN_HASH_MULTIPLIER + text.charCodeAt(i)) | 0;
   }
-  return Math.abs(hash) % 100;
-};
-
-/** Human label for a groan score. */
-const groanLabel = (score: number): string => {
-  if (score < GROAN_SMIRK_MAX) return "Smirk";
-  if (score < GROAN_CHUCKLE_MAX) return "Mild chuckle";
-  return "Full eye-roll";
+  return Math.abs(hash) % GROAN_SCORE_MAX;
 };
 
 /** Renders the joke card with loading/error states and action buttons. */
@@ -76,12 +46,10 @@ const JokeCard: React.FC<JokeCardProps> = ({
 }) => {
   const jokeText = getJokeText(joke);
   const score = groanScore(jokeText);
-  const label = groanLabel(score);
 
   // Only show the skeleton on the first load; keep the joke during refreshes.
   const isInitialLoad = isLoading && !joke;
   const status: JokeStatus = isLoading ? "loading" : error ? "error" : "live";
-  const statusStyle = statusConfig[status];
 
   return (
     <Card className="flex flex-col justify-between">
@@ -90,15 +58,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             Random Joke
           </h2>
-          <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyle.wrap}`}
-          >
-            <span
-              className={`h-1.5 w-1.5 rounded-full ${statusStyle.dot}`}
-              aria-hidden="true"
-            />
-            {statusStyle.label}
-          </span>
+          <StatusBadge status={status} />
         </div>
 
         <div
@@ -167,37 +127,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
               </div>
             </div>
           ) : !error && jokeText ? (
-            <div
-              role="meter"
-              aria-label={`Groan level: ${label}`}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={score}
-            >
-              <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.2em]">
-                <span className="text-zinc-600 dark:text-zinc-400">
-                  Groan-o-Meter
-                </span>
-                <span className="text-orange-700 dark:text-orange-400">
-                  {label}
-                </span>
-              </div>
-              <div className="relative mt-2 h-1.5 rounded-full bg-zinc-200 dark:bg-white/10">
-                <div
-                  className="absolute inset-y-0 left-0 rounded-full bg-linear-to-r from-amber-400 to-orange-500"
-                  style={{ width: `${score}%` }}
-                />
-                <div
-                  className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-orange-500 dark:border-[#141519]"
-                  style={{ left: `clamp(7px, ${score}%, calc(100% - 7px))` }}
-                />
-              </div>
-              <div className="mt-1.5 flex flex-wrap justify-between gap-x-2 text-[11px] uppercase tracking-wide text-zinc-600 dark:text-zinc-400">
-                <span>Smirk</span>
-                <span>Sigh</span>
-                <span>Full eye-roll</span>
-              </div>
-            </div>
+            <GroanMeter score={score} />
           ) : null}
         </div>
       </div>

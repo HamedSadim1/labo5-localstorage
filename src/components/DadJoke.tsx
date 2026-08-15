@@ -7,7 +7,12 @@ import { useDarkMode } from "../hooks/useDarkMode";
 import { useFavorites } from "../hooks/useFavorites";
 import { useTimeout } from "../hooks/useTimeout";
 import { fetchJoke } from "../utils/api";
-import { ERROR_MESSAGES, HTTP_TOO_MANY_REQUESTS, TOAST_DURATION_MS } from "../config";
+import {
+  ERROR_MESSAGES,
+  HTTP_TOO_MANY_REQUESTS,
+  NOTICES,
+  TOAST_DURATION_MS,
+} from "../config";
 import Header from "./Header";
 import JokeCard from "./JokeCard";
 import FavoritesList from "./FavoritesList";
@@ -73,7 +78,7 @@ const DadJoke = () => {
     if (favorites.includes(text)) {
       removeFavorite(text);
     } else if (!addFavorite(text)) {
-      showNotice("Favorites are full — remove one first.");
+      showNotice(NOTICES.favoritesFull);
     }
   };
 
