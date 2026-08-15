@@ -2,11 +2,7 @@
 import { useLayoutEffect } from "react";
 import { usePersistedState } from "./usePersistedState";
 import { STORAGE_KEYS } from "../config";
-
-/** Whether the OS currently prefers a dark color scheme. */
-const systemPrefersDark = (): boolean =>
-  typeof window !== "undefined" &&
-  window.matchMedia("(prefers-color-scheme: dark)").matches;
+import { systemPrefersDark } from "../utils/theme";
 
 /** Parses the persisted value, falling back to the system preference. */
 const parseDarkMode = (raw: string | null): boolean =>

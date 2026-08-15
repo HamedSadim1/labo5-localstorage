@@ -1,90 +1,36 @@
-/** Main component for the Dad Joke application, handling joke fetching, favorites, and dark mode. */
-import { useState, useEffect, useCallback, useRef } from "react";
-import axios from "axios";
-import type { Joke } from "../services/JokesData";
+/** Main component for the Dad Joke application. */
 import { getJokeText } from "../services/JokesData";
 import { useDarkMode } from "../hooks/useDarkMode";
 import { useFavorites } from "../hooks/useFavorites";
-import { useTimeout } from "../hooks/useTimeout";
-import { fetchJoke } from "../utils/api";
-import {
-  ERROR_MESSAGES,
-  HTTP_TOO_MANY_REQUESTS,
-  NOTICES,
-  TOAST_DURATION_MS,
-} from "../config";
+import { useJoke } from "../hooks/useJoke";
+import { useNotice } from "../hooks/useNotice";
+import { NOTICES } from "../config";
 import Header from "./Header";
 import JokeCard from "./JokeCard";
 import FavoritesList from "./FavoritesList";
 import Footer from "./Footer";
+import { Toast } from "./Toast";
 
 /** Main component rendering the dad joke app. */
 const DadJoke = () => {
-  const [joke, setJoke] = useState<Joke | null>(null);
-  const [jokeId, setJokeId] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
   const { darkMode, toggleDarkMode } = useDarkMode();
   const { favorites, addFavorite, removeFavorite, clearFavorites } =
     useFavorites();
-  const { schedule: scheduleNotice } = useTimeout();
+  const { joke, jokeId, isLoading, error, loadJoke } = useJoke();
+  const { notice, showNotice } = useNotice();
 
-  /** Fetches and sets a new joke. */
-  const loadJoke = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-    try {
-      const newJoke = await fetchJoke(controller.signal);
-      setJoke(newJoke);
-      setJokeId((id) => id + 1);
-    } catch (err) {
-      if (axios.isCancel(err)) return;
-      console.error("Error loading joke:", err);
-      const status = axios.isAxiosError(err) ? err.response?.status : undefined;
-      setError(
-        status === HTTP_TOO_MANY_REQUESTS
-          ? ERROR_MESSAGES.rateLimit
-          : navigator.onLine
-            ? ERROR_MESSAGES.generic
-            : ERROR_MESSAGES.offline
-      );
-    } finally {
-      if (abortRef.current === controller) {
-        setIsLoading(false);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    void loadJoke();
-    return () => abortRef.current?.abort();
-  }, [loadJoke]);
-
-  /** Shows a transient toast message that auto-dismisses. */
-  const showNotice = (message: string) => {
-    setNotice(message);
-    scheduleNotice(() => setNotice(null), TOAST_DURATION_MS);
-  };
+  const jokeText = getJokeText(joke);
+  const isFavorite = jokeText !== "" && favorites.includes(jokeText);
 
   /** Toggles the current joke in/out of favorites. */
-  const handleToggleFavorite = (): void => {
-    const text = getJokeText(joke);
-    if (!text) return;
-    if (favorites.includes(text)) {
-      removeFavorite(text);
-    } else if (!addFavorite(text)) {
+  const handleToggleFavorite = () => {
+    if (!jokeText) return;
+    if (favorites.includes(jokeText)) {
+      removeFavorite(jokeText);
+    } else if (!addFavorite(jokeText)) {
       showNotice(NOTICES.favoritesFull);
     }
   };
-
-  // Determine if the current joke is already a favorite
-  const jokeText = getJokeText(joke);
-  const isFavorite: boolean = jokeText !== "" && favorites.includes(jokeText);
 
   return (
     <div
@@ -131,14 +77,7 @@ const DadJoke = () => {
         <Footer />
       </div>
 
-      {notice && (
-        <div
-          role="status"
-          className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full border border-orange-500/40 bg-white px-4 py-2 text-sm font-medium text-orange-700 shadow-lg dark:bg-[#141519] dark:text-orange-300"
-        >
-          {notice}
-        </div>
-      )}
+      <Toast message={notice} />
     </div>
   );
 };

@@ -1,17 +1,7 @@
 /** Groan-o-Meter: a rating gauge derived from a joke's groan score. */
 import React from "react";
-import {
-  GROAN_CHUCKLE_MAX,
-  GROAN_SCORE_MAX,
-  GROAN_SMIRK_MAX,
-} from "../config";
-
-/** Human label for a groan score. */
-const groanLabel = (score: number): string => {
-  if (score < GROAN_SMIRK_MAX) return "Smirk";
-  if (score < GROAN_CHUCKLE_MAX) return "Mild chuckle";
-  return "Full eye-roll";
-};
+import { groanLabel } from "../utils/groan";
+import { GROAN_SCORE_MAX } from "../config";
 
 interface GroanMeterProps {
   score: number;

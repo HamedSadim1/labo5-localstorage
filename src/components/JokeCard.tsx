@@ -10,7 +10,7 @@ import { GroanMeter } from "./GroanMeter";
 import { StatusBadge } from "./StatusBadge";
 import type { JokeStatus } from "./StatusBadge";
 import { CaretRightIcon, HeartIcon, RefreshIcon } from "./icons";
-import { GROAN_HASH_MULTIPLIER, GROAN_SCORE_MAX } from "../config";
+import { groanScore } from "../utils/groan";
 
 const MICRO_LABEL_CLASSES =
   "text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-700 dark:text-orange-400";
@@ -24,15 +24,6 @@ interface JokeCardProps {
   onNewJoke: () => void;
   isFavorite: boolean;
 }
-
-/** Stable pseudo-rating (0-100) derived from the joke text. */
-const groanScore = (text: string): number => {
-  let hash = 0;
-  for (let i = 0; i < text.length; i++) {
-    hash = (hash * GROAN_HASH_MULTIPLIER + text.charCodeAt(i)) | 0;
-  }
-  return Math.abs(hash) % GROAN_SCORE_MAX;
-};
 
 /** Renders the joke card with loading/error states and action buttons. */
 const JokeCard: React.FC<JokeCardProps> = ({
