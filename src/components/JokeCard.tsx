@@ -1,47 +1,113 @@
-/** Component for displaying the current joke with options to favorite or get a new one. */
-import React from "react";
+/** Component for displaying the current joke with actions to favorite, copy, or get a new one. */
+import React, { useState } from "react";
 import { Joke } from "../services/JokesData";
+import { copyText } from "../utils/clipboard";
 
 interface JokeCardProps {
   joke: Joke | null;
+  isLoading: boolean;
+  error: string | null;
   onFavorite: () => void;
   onNewJoke: () => void;
   isFavorite: boolean;
 }
 
-/** Renders the joke card with favorite and new joke buttons. */
+/** Renders the joke card with loading/error states and action buttons. */
 const JokeCard: React.FC<JokeCardProps> = ({
   joke,
+  isLoading,
+  error,
   onFavorite,
   onNewJoke,
   isFavorite,
 }) => {
+  const [copied, setCopied] = useState(false);
+  const jokeText = joke?.attachments[0].text ?? "";
+
+  /** Copies the current joke to the clipboard and shows feedback. */
+  const handleCopy = async () => {
+    const ok = await copyText(jokeText);
+    if (ok) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const buttonBase =
+    "px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100";
+
   return (
-    <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between">
-      <h2 className="text-2xl font-semibold mb-4 text-center text-white dark:text-gray-100">
-        Random Joke
-      </h2>
-      <div className="text-center mb-6">
-        <p className="text-lg italic mb-4 p-4 bg-white/5 dark:bg-black/5 rounded-xl border border-white/10 text-gray-900 dark:text-gray-100 min-h-24 flex items-center justify-center">
-          "{joke?.attachments[0].text}"
-        </p>
-      </div>
-      <div className="flex justify-center space-x-4">
-        <button
-          onClick={onFavorite}
-          className="px-6 py-3 bg-linear-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={!joke || isFavorite}
+    <section className="flex flex-col justify-between rounded-3xl border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/5 p-6 shadow-xl shadow-slate-200/50 backdrop-blur-xl dark:shadow-black/20 sm:p-8">
+      <div>
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+            Random Joke
+          </h2>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+            Live
+          </span>
+        </div>
+
+        <div
+          className="relative mb-8 flex min-h-32 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 px-6 py-6"
+          aria-live="polite"
         >
-          ❤️ Favorite
-        </button>
+          <span
+            className="pointer-events-none absolute left-4 top-2 text-5xl font-serif text-indigo-500/20"
+            aria-hidden="true"
+          >
+            “
+          </span>
+          {isLoading ? (
+            <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400">
+              <span
+                className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-500/40 border-t-indigo-500"
+                aria-hidden="true"
+              />
+              <span>Fetching a joke…</span>
+            </div>
+          ) : error ? (
+            <p className="text-center text-rose-500 dark:text-rose-400">{error}</p>
+          ) : (
+            <p
+              key={jokeText}
+              className="animate-fade-in text-center text-lg italic leading-relaxed text-slate-800 dark:text-slate-100 sm:text-xl"
+            >
+              {jokeText}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap justify-center gap-3">
         <button
           onClick={onNewJoke}
-          className="px-6 py-3 bg-linear-to-r from-blue-500 to-cyan-600 text-white rounded-full hover:from-blue-600 hover:to-cyan-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+          disabled={isLoading}
+          className={`${buttonBase} bg-linear-to-r from-indigo-500 to-violet-500 text-white shadow-lg shadow-indigo-500/30 hover:from-indigo-600 hover:to-violet-600 hover:shadow-xl hover:shadow-indigo-500/30`}
         >
-          🔄 New Joke
+          {isLoading ? "Loading…" : "🔄 New Joke"}
+        </button>
+        <button
+          onClick={handleCopy}
+          disabled={!jokeText}
+          className={`${buttonBase} border border-slate-300 dark:border-white/10 bg-white dark:bg-white/5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/10`}
+        >
+          {copied ? "✅ Copied!" : "📋 Copy"}
+        </button>
+        <button
+          onClick={onFavorite}
+          disabled={!joke || isFavorite}
+          className={`${buttonBase} ${
+            isFavorite
+              ? "bg-linear-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-rose-500/30"
+              : "border border-slate-300 dark:border-white/10 bg-white dark:bg-white/5 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/10"
+          }`}
+        >
+          {isFavorite ? "❤️ Favorited" : "🤍 Favorite"}
         </button>
       </div>
-    </div>
+    </section>
   );
 };
 

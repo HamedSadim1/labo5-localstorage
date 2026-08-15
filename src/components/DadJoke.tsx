@@ -1,5 +1,5 @@
 /** Main component for the Dad Joke application, handling joke fetching, favorites, and dark mode. */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Joke } from "../services/JokesData";
 import { useDarkMode } from "../hooks/useDarkMode";
 import { useFavorites } from "../hooks/useFavorites";
@@ -12,33 +12,36 @@ import Footer from "./Footer";
 /** Main component rendering the dad joke app. */
 const DadJoke = () => {
   const [joke, setJoke] = useState<Joke | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { darkMode, toggleDarkMode } = useDarkMode();
-  const { favorites, addFavorite, removeFavorite } = useFavorites();
+  const { favorites, addFavorite, removeFavorite, clearFavorites } =
+    useFavorites();
 
   /** Fetches and sets a new joke. */
-  const loadJoke = async () => {
+  const loadJoke = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
     try {
       const newJoke = await fetchJoke();
       setJoke(newJoke);
-    } catch (error) {
-      console.error("Error loading joke:", error);
+    } catch (err) {
+      console.error("Error loading joke:", err);
+      setError("Couldn't load a joke. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadJoke();
-  }, []);
+  }, [loadJoke]);
 
   /** Adds the current joke to favorites. */
   const handleFavoriteJoke = (): void => {
     if (joke?.attachments[0].text) {
       addFavorite(joke.attachments[0].text);
     }
-  };
-
-  /** Loads a new joke. */
-  const handleNewJoke = (): void => {
-    loadJoke();
   };
 
   // Determine if the current joke is already a favorite
@@ -49,21 +52,35 @@ const DadJoke = () => {
   return (
     <div
       className={`${
-        darkMode
-          ? "dark bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900"
-          : "bg-linear-to-br from-cyan-100 via-blue-100 to-indigo-100"
-      } min-h-screen transition-all duration-500`}
+        darkMode ? "dark bg-slate-950" : "bg-slate-50"
+      } relative min-h-screen overflow-hidden transition-colors duration-300`}
     >
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      {/* Decorative background */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-indigo-500/20 blur-3xl dark:bg-indigo-500/15" />
+        <div className="absolute -right-32 top-1/3 h-96 w-96 rounded-full bg-violet-500/20 blur-3xl dark:bg-violet-500/10" />
+        <div className="absolute -bottom-32 left-1/3 h-96 w-96 rounded-full bg-rose-400/10 blur-3xl dark:bg-rose-500/10" />
+      </div>
+
+      <div className="relative mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        <main className="grid md:grid-cols-2 gap-8">
+        <main className="grid items-stretch gap-6 md:grid-cols-2">
           <JokeCard
             joke={joke}
+            isLoading={isLoading}
+            error={error}
             onFavorite={handleFavoriteJoke}
-            onNewJoke={handleNewJoke}
+            onNewJoke={loadJoke}
             isFavorite={isFavorite}
           />
-          <FavoritesList favorites={favorites} onRemove={removeFavorite} />
+          <FavoritesList
+            favorites={favorites}
+            onRemove={removeFavorite}
+            onClear={clearFavorites}
+          />
         </main>
         <Footer />
       </div>

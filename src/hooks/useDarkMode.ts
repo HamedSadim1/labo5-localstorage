@@ -1,13 +1,25 @@
-/** Custom hook for managing dark mode state. */
-import { useState } from "react";
+/** Custom hook for managing dark mode state, persisted to localStorage. */
+import { useState, useEffect } from "react";
+
+const STORAGE_KEY = "darkMode";
 
 /** Returns dark mode state and toggle function. */
 export const useDarkMode = () => {
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved !== null) {
+      return saved === "true";
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, String(darkMode));
+  }, [darkMode]);
 
   /** Toggles the dark mode state. */
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+    setDarkMode((prev) => !prev);
   };
 
   return { darkMode, toggleDarkMode };
