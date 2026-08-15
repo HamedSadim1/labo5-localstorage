@@ -1,17 +1,17 @@
 /** Component for displaying the current joke with actions to favorite, copy, or get a new one. */
-import React, { useEffect } from "react";
+import React from "react";
 import type { Joke } from "../services/JokesData";
-import { useCopy } from "../hooks/useCopy";
+import { Card, PANEL_CLASSES } from "./Card";
+import { CopyButton } from "./CopyButton";
 import { Button } from "./Button";
 import { Skeleton } from "./Skeleton";
-import {
-  CaretRightIcon,
-  CheckIcon,
-  CopyIcon,
-  HeartIcon,
-  RefreshIcon,
-  XIcon,
-} from "./icons";
+import { CaretRightIcon, HeartIcon, RefreshIcon } from "./icons";
+
+const MICRO_LABEL_CLASSES =
+  "text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-700 dark:text-orange-400";
+
+const GROAN_SMIRK_MAX = 34;
+const GROAN_CHUCKLE_MAX = 67;
 
 interface JokeCardProps {
   joke: Joke | null;
@@ -58,8 +58,8 @@ const groanScore = (text: string): number => {
 
 /** Human label for a groan score. */
 const groanLabel = (score: number): string => {
-  if (score < 34) return "Smirk";
-  if (score < 67) return "Mild chuckle";
+  if (score < GROAN_SMIRK_MAX) return "Smirk";
+  if (score < GROAN_CHUCKLE_MAX) return "Mild chuckle";
   return "Full eye-roll";
 };
 
@@ -73,13 +73,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
   onNewJoke,
   isFavorite,
 }) => {
-  const { copy, isCopied, isFailed, reset } = useCopy();
   const jokeText = joke?.attachments?.[0]?.text ?? "";
-
-  // Clear copy feedback whenever a new joke loads so it never shows stale text.
-  useEffect(() => {
-    reset();
-  }, [jokeId, reset]);
   const score = groanScore(jokeText);
   const label = groanLabel(score);
 
@@ -89,7 +83,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
   const statusStyle = statusConfig[status];
 
   return (
-    <section className="flex flex-col justify-between rounded-3xl border border-orange-950/10 bg-white/80 p-6 shadow-xl shadow-orange-900/5 backdrop-blur-xl dark:border-white/10 dark:bg-[#141519] dark:shadow-black/30 sm:p-8">
+    <Card className="flex flex-col justify-between">
       <div>
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
@@ -107,7 +101,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
         </div>
 
         <div
-          className="flex min-h-36 items-center justify-center rounded-2xl border border-orange-950/10 bg-orange-50/60 px-6 py-6 text-center dark:border-white/10 dark:bg-black/30"
+          className={`flex min-h-36 items-center justify-center ${PANEL_CLASSES} px-6 py-6 text-center`}
           aria-live="polite"
         >
           {isInitialLoad ? (
@@ -135,7 +129,9 @@ const JokeCard: React.FC<JokeCardProps> = ({
             </div>
           ) : (
             <div>
-              <div className="mb-3 flex items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-700 dark:text-orange-400">
+              <div
+                className={`mb-3 flex items-center justify-center gap-1.5 ${MICRO_LABEL_CLASSES}`}
+              >
                 <CaretRightIcon className="h-3 w-3" /> Setup / Punchline
               </div>
               <p
@@ -145,7 +141,9 @@ const JokeCard: React.FC<JokeCardProps> = ({
                 {jokeText || "This joke is too shy — try another one."}
               </p>
               {jokeText && (
-                <span className="mt-4 inline-block rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-orange-700 dark:text-orange-400">
+                <span
+                  className={`mt-4 inline-block rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 ${MICRO_LABEL_CLASSES}`}
+                >
                   Ba-dum-tss
                 </span>
               )}
@@ -210,25 +208,13 @@ const JokeCard: React.FC<JokeCardProps> = ({
           />
           {isLoading ? "Loading…" : "New Joke"}
         </Button>
-        <Button
+        <CopyButton
+          text={jokeText}
           variant="secondary"
-          onClick={() => copy(jokeText)}
+          showLabel
+          resetKey={jokeId}
           disabled={!jokeText}
-        >
-          {isCopied() ? (
-            <>
-              <CheckIcon className="h-4 w-4" /> Copied!
-            </>
-          ) : isFailed() ? (
-            <>
-              <XIcon className="h-4 w-4" /> Copy failed
-            </>
-          ) : (
-            <>
-              <CopyIcon className="h-4 w-4" /> Copy
-            </>
-          )}
-        </Button>
+        />
         <Button
           variant={isFavorite ? "accent" : "favorite"}
           aria-pressed={isFavorite}
@@ -239,7 +225,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
           Favorite
         </Button>
       </div>
-    </section>
+    </Card>
   );
 };
 

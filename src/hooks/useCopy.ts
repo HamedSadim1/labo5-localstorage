@@ -1,26 +1,27 @@
 /** Hook for copying text with transient "copied"/"failed" feedback. */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { copyText } from "../utils/clipboard";
+import { useTimeout } from "./useTimeout";
+import { COPY_FEEDBACK_MS } from "../config";
 
 /** Returns a copy function plus copied/failed checks for a given id. */
-export const useCopy = (duration = 2000) => {
+export const useCopy = (duration = COPY_FEEDBACK_MS) => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [failedId, setFailedId] = useState<string | null>(null);
-  const timer = useRef<number | undefined>(undefined);
+  const { schedule, cancel } = useTimeout();
 
   /** Copies text and briefly marks the given id as copied or failed. */
   const copy = useCallback(
     async (text: string, id = "default") => {
       const ok = await copyText(text);
-      window.clearTimeout(timer.current);
       setCopiedId(ok ? id : null);
       setFailedId(ok ? null : id);
-      timer.current = window.setTimeout(() => {
+      schedule(() => {
         setCopiedId(null);
         setFailedId(null);
       }, duration);
     },
-    [duration]
+    [duration, schedule]
   );
 
   /** Whether the given id is currently marked as copied. */
@@ -37,12 +38,10 @@ export const useCopy = (duration = 2000) => {
 
   /** Clears any copied/failed feedback immediately. */
   const reset = useCallback(() => {
-    window.clearTimeout(timer.current);
+    cancel();
     setCopiedId(null);
     setFailedId(null);
-  }, []);
-
-  useEffect(() => () => window.clearTimeout(timer.current), []);
+  }, [cancel]);
 
   return { copy, isCopied, isFailed, reset };
 };

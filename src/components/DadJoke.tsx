@@ -4,7 +4,9 @@ import axios from "axios";
 import type { Joke } from "../services/JokesData";
 import { useDarkMode } from "../hooks/useDarkMode";
 import { useFavorites } from "../hooks/useFavorites";
+import { useTimeout } from "../hooks/useTimeout";
 import { fetchJoke } from "../utils/api";
+import { ERROR_MESSAGES, HTTP_TOO_MANY_REQUESTS, TOAST_DURATION_MS } from "../config";
 import Header from "./Header";
 import JokeCard from "./JokeCard";
 import FavoritesList from "./FavoritesList";
@@ -18,10 +20,10 @@ const DadJoke = () => {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-  const noticeTimer = useRef<number | undefined>(undefined);
   const { darkMode, toggleDarkMode } = useDarkMode();
   const { favorites, addFavorite, removeFavorite, clearFavorites } =
     useFavorites();
+  const { schedule: scheduleNotice } = useTimeout();
 
   /** Fetches and sets a new joke. */
   const loadJoke = useCallback(async () => {
@@ -39,11 +41,11 @@ const DadJoke = () => {
       console.error("Error loading joke:", err);
       const status = axios.isAxiosError(err) ? err.response?.status : undefined;
       setError(
-        status === 429
-          ? "Too many requests — slow down and try again in a moment."
+        status === HTTP_TOO_MANY_REQUESTS
+          ? ERROR_MESSAGES.rateLimit
           : navigator.onLine
-            ? "Couldn't load a joke. Please try again."
-            : "You're offline. Check your connection and try again."
+            ? ERROR_MESSAGES.generic
+            : ERROR_MESSAGES.offline
       );
     } finally {
       if (abortRef.current === controller) {
@@ -57,13 +59,10 @@ const DadJoke = () => {
     return () => abortRef.current?.abort();
   }, [loadJoke]);
 
-  useEffect(() => () => window.clearTimeout(noticeTimer.current), []);
-
   /** Shows a transient toast message that auto-dismisses. */
   const showNotice = (message: string) => {
     setNotice(message);
-    window.clearTimeout(noticeTimer.current);
-    noticeTimer.current = window.setTimeout(() => setNotice(null), 3000);
+    scheduleNotice(() => setNotice(null), TOAST_DURATION_MS);
   };
 
   /** Toggles the current joke in/out of favorites. */

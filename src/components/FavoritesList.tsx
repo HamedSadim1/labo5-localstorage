@@ -1,8 +1,15 @@
 /** Component for displaying and managing the list of favorite jokes. */
 import React, { useEffect, useRef, useState } from "react";
-import { useCopy } from "../hooks/useCopy";
+import { Card, PANEL_CLASSES } from "./Card";
+import { CopyButton } from "./CopyButton";
 import { Button } from "./Button";
-import { CheckIcon, CopyIcon, FrownIcon, XIcon } from "./icons";
+import { FrownIcon, XIcon } from "./icons";
+import { useTimeout } from "../hooks/useTimeout";
+import {
+  CONFIRM_RESET_MS,
+  COPY_FEEDBACK_MS,
+  FAVORITE_HIGHLIGHT_MS,
+} from "../config";
 
 interface FavoritesListProps {
   favorites: string[];
@@ -16,12 +23,11 @@ const FavoritesList: React.FC<FavoritesListProps> = ({
   onRemove,
   onClear,
 }) => {
-  const { copy, isCopied, isFailed } = useCopy(1500);
   const [confirmingClear, setConfirmingClear] = useState(false);
   const [highlighted, setHighlighted] = useState<string | null>(null);
-  const confirmTimer = useRef<number | undefined>(undefined);
-  const highlightTimer = useRef<number | undefined>(undefined);
   const prevFavoritesRef = useRef<string[]>(favorites);
+  const { schedule: scheduleConfirm, cancel: cancelConfirm } = useTimeout();
+  const { schedule: scheduleHighlight } = useTimeout();
 
   // Briefly highlight a newly added favorite for feedback.
   useEffect(() => {
@@ -29,40 +35,25 @@ const FavoritesList: React.FC<FavoritesListProps> = ({
     if (favorites.length > prev.length) {
       const added = favorites[favorites.length - 1];
       setHighlighted(added);
-      window.clearTimeout(highlightTimer.current);
-      highlightTimer.current = window.setTimeout(
-        () => setHighlighted(null),
-        1600
-      );
+      scheduleHighlight(() => setHighlighted(null), FAVORITE_HIGHLIGHT_MS);
     }
     prevFavoritesRef.current = favorites;
-  }, [favorites]);
-
-  useEffect(
-    () => () => {
-      window.clearTimeout(confirmTimer.current);
-      window.clearTimeout(highlightTimer.current);
-    },
-    []
-  );
+  }, [favorites, scheduleHighlight]);
 
   /** Clears favorites after a two-step confirmation. */
   const handleClearClick = () => {
     if (confirmingClear) {
       onClear();
       setConfirmingClear(false);
+      cancelConfirm();
       return;
     }
     setConfirmingClear(true);
-    window.clearTimeout(confirmTimer.current);
-    confirmTimer.current = window.setTimeout(
-      () => setConfirmingClear(false),
-      3000
-    );
+    scheduleConfirm(() => setConfirmingClear(false), CONFIRM_RESET_MS);
   };
 
   return (
-    <section className="flex flex-col rounded-3xl border border-orange-950/10 bg-white/80 p-6 shadow-xl shadow-orange-900/5 backdrop-blur-xl dark:border-white/10 dark:bg-[#141519] dark:shadow-black/30 sm:p-8">
+    <Card className="flex flex-col">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
           Favorite Jokes
@@ -103,7 +94,7 @@ const FavoritesList: React.FC<FavoritesListProps> = ({
           {favorites.map((fav) => (
             <li
               key={fav}
-              className={`flex items-start justify-between gap-3 rounded-2xl border border-orange-950/10 bg-orange-50/60 p-4 transition-all duration-300 dark:border-white/10 dark:bg-black/30 ${
+              className={`flex items-start justify-between gap-3 ${PANEL_CLASSES} p-4 transition-all duration-300 ${
                 highlighted === fav ? "ring-2 ring-orange-400/60" : ""
               }`}
             >
@@ -111,26 +102,13 @@ const FavoritesList: React.FC<FavoritesListProps> = ({
                 “{fav}”
               </p>
               <div className="flex shrink-0 gap-1">
-                <Button
+                <CopyButton
+                  text={fav}
+                  id={fav}
                   variant="icon"
                   size="icon"
-                  aria-label={
-                    isCopied(fav)
-                      ? "Copied"
-                      : isFailed(fav)
-                        ? "Copy failed"
-                        : "Copy joke"
-                  }
-                  onClick={() => copy(fav, fav)}
-                >
-                  {isCopied(fav) ? (
-                    <CheckIcon className="h-4 w-4" />
-                  ) : isFailed(fav) ? (
-                    <XIcon className="h-4 w-4" />
-                  ) : (
-                    <CopyIcon className="h-4 w-4" />
-                  )}
-                </Button>
+                  duration={COPY_FEEDBACK_MS}
+                />
                 <Button
                   variant="iconDanger"
                   size="icon"
@@ -144,7 +122,7 @@ const FavoritesList: React.FC<FavoritesListProps> = ({
           ))}
         </ul>
       )}
-    </section>
+    </Card>
   );
 };
 
