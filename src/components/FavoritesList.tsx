@@ -1,6 +1,8 @@
 /** Component for displaying and managing the list of favorite jokes. */
-import React, { useState } from "react";
-import { copyText } from "../utils/clipboard";
+import React from "react";
+import { useCopy } from "../hooks/useCopy";
+import { Button } from "./Button";
+import { CheckIcon, CopyIcon, FrownIcon, XIcon } from "./icons";
 
 interface FavoritesListProps {
   favorites: string[];
@@ -14,16 +16,7 @@ const FavoritesList: React.FC<FavoritesListProps> = ({
   onRemove,
   onClear,
 }) => {
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
-
-  /** Copies a favorite joke to the clipboard. */
-  const handleCopy = async (text: string, index: number) => {
-    const ok = await copyText(text);
-    if (ok) {
-      setCopiedIndex(index);
-      setTimeout(() => setCopiedIndex(null), 1500);
-    }
-  };
+  const { copy, isCopied } = useCopy(1500);
 
   return (
     <section className="flex flex-col rounded-3xl border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/5 p-6 shadow-xl shadow-slate-200/50 backdrop-blur-xl dark:shadow-black/20 sm:p-8">
@@ -35,26 +28,23 @@ const FavoritesList: React.FC<FavoritesListProps> = ({
           </span>
         </h2>
         {favorites.length > 0 && (
-          <button
-            onClick={onClear}
-            className="text-xs font-semibold text-slate-400 transition-colors hover:text-rose-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-full px-2 py-1"
-          >
+          <Button variant="ghost" size="sm" onClick={onClear}>
             Clear all
-          </button>
+          </Button>
         )}
       </div>
 
       {favorites.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-3 py-10 text-center">
-          <span className="grid h-14 w-14 place-items-center rounded-full bg-indigo-500/10 text-2xl">
-            <span aria-hidden="true">😢</span>
+          <span className="grid h-14 w-14 place-items-center rounded-full bg-indigo-500/10 text-indigo-500 dark:text-indigo-300">
+            <FrownIcon className="h-6 w-6" />
           </span>
           <div>
             <p className="font-medium text-slate-700 dark:text-slate-200">
               No favorites yet
             </p>
             <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-              Click 🤍 on a joke to save it here.
+              Click the heart on a joke to save it here.
             </p>
           </div>
         </div>
@@ -69,20 +59,26 @@ const FavoritesList: React.FC<FavoritesListProps> = ({
                 “{fav}”
               </span>
               <div className="flex shrink-0 gap-1.5">
-                <button
-                  onClick={() => handleCopy(fav, index)}
+                <Button
+                  variant="icon"
+                  size="icon"
                   aria-label="Copy joke"
-                  className="grid h-8 w-8 place-items-center rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-xs text-slate-500 transition-all duration-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 active:scale-95"
+                  onClick={() => copy(fav, String(index))}
                 >
-                  {copiedIndex === index ? "✅" : "📋"}
-                </button>
-                <button
-                  onClick={() => onRemove(index)}
+                  {isCopied(String(index)) ? (
+                    <CheckIcon className="h-4 w-4" />
+                  ) : (
+                    <CopyIcon className="h-4 w-4" />
+                  )}
+                </Button>
+                <Button
+                  variant="iconDanger"
+                  size="icon"
                   aria-label="Remove joke"
-                  className="grid h-8 w-8 place-items-center rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-xs text-slate-500 transition-all duration-300 hover:border-rose-300 hover:bg-rose-500 hover:text-white dark:hover:border-rose-500/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 active:scale-95"
+                  onClick={() => onRemove(index)}
                 >
-                  ✕
-                </button>
+                  <XIcon className="h-4 w-4" />
+                </Button>
               </div>
             </li>
           ))}

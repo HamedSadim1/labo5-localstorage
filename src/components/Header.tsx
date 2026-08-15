@@ -1,5 +1,6 @@
 /** Header component with the app branding, hero section and dark mode toggle. */
 import React from "react";
+import { LogoIcon, MoonIcon, SparklesIcon, SunIcon } from "./icons";
 
 interface HeaderProps {
   darkMode: boolean;
@@ -13,11 +14,8 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
       {/* Top bar */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <span
-            className="grid place-items-center h-9 w-9 rounded-xl bg-linear-to-br from-indigo-500 to-violet-500 shadow-lg shadow-indigo-500/25"
-            aria-hidden="true"
-          >
-            <span className="text-lg">😂</span>
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-500 shadow-lg shadow-indigo-500/25">
+            <LogoIcon className="h-5 w-5 text-white" />
           </span>
           <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
             DadJokes
@@ -30,35 +28,12 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
           aria-label={
             darkMode ? "Switch to light mode" : "Switch to dark mode"
           }
-          className="grid place-items-center h-10 w-10 rounded-full border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/5 text-slate-600 dark:text-slate-300 backdrop-blur transition-all duration-300 hover:bg-white dark:hover:bg-white/10 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 active:scale-95"
+          className="grid h-10 w-10 place-items-center rounded-full border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/5 text-slate-600 dark:text-slate-300 backdrop-blur transition-all duration-300 hover:scale-105 hover:bg-white dark:hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 active:scale-95"
         >
           {darkMode ? (
-            <svg
-              className="h-5 w-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="4" />
-              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-            </svg>
+            <SunIcon className="h-5 w-5" />
           ) : (
-            <svg
-              className="h-5 w-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
+            <MoonIcon className="h-5 w-5" />
           )}
         </button>
       </div>
@@ -66,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleDarkMode }) => {
       {/* Hero */}
       <div className="mt-14 text-center">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/10 dark:bg-indigo-400/10 px-3 py-1 text-xs font-semibold text-indigo-600 dark:text-indigo-300 ring-1 ring-inset ring-indigo-500/20">
-          <span aria-hidden="true">✨</span> A fresh joke every click
+          <SparklesIcon className="h-3.5 w-3.5" /> A fresh joke every click
         </span>
         <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
           Ready for a{" "}
