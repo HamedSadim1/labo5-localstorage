@@ -35,6 +35,11 @@ export default tseslint.config(
       "@typescript-eslint/no-unsafe-call": "error",
       "@typescript-eslint/no-unsafe-return": "error",
       "@typescript-eslint/no-unsafe-argument": "error",
+      // Strictness and type hygiene.
+      "no-console": ["error", { allow: ["warn", "error"] }],
+      "eqeqeq": "error",
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/consistent-type-imports": "error",
     },
   },
 );

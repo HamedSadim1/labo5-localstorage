@@ -1,6 +1,6 @@
 /** Component for displaying the current joke with actions to favorite, copy, or get a new one. */
 import React, { useEffect } from "react";
-import { Joke } from "../services/JokesData";
+import type { Joke } from "../services/JokesData";
 import { useCopy } from "../hooks/useCopy";
 import { Button } from "./Button";
 import { Skeleton } from "./Skeleton";

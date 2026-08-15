@@ -1,7 +1,7 @@
 /** Main component for the Dad Joke application, handling joke fetching, favorites, and dark mode. */
 import { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
-import { Joke } from "../services/JokesData";
+import type { Joke } from "../services/JokesData";
 import { useDarkMode } from "../hooks/useDarkMode";
 import { useFavorites } from "../hooks/useFavorites";
 import { fetchJoke } from "../utils/api";
@@ -53,7 +53,7 @@ const DadJoke = () => {
   }, []);
 
   useEffect(() => {
-    loadJoke();
+    void loadJoke();
     return () => abortRef.current?.abort();
   }, [loadJoke]);
 
