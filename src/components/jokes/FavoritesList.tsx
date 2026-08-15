@@ -1,10 +1,10 @@
 /** Component for displaying and managing the list of favorite jokes. */
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn";
-import { Card, PANEL_CLASSES } from "@/components/Card";
-import { CopyButton } from "@/components/CopyButton";
-import { Button } from "@/components/Button";
-import { FrownIcon, XIcon } from "@/components/icons";
+import { Card, PANEL_CLASSES } from "@/components/ui/Card";
+import { CopyButton } from "@/components/ui/CopyButton";
+import { Button } from "@/components/ui/Button";
+import { FrownIcon, XIcon } from "@/components/ui/icons";
 import { useTimeout } from "@/hooks/useTimeout";
 import {
   CONFIRM_RESET_MS,

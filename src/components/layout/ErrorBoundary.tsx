@@ -1,7 +1,7 @@
 /** Error boundary that catches unexpected render errors. */
 import React from "react";
-import { Button } from "@/components/Button";
-import { FrownIcon } from "@/components/icons";
+import { Button } from "@/components/ui/Button";
+import { FrownIcon } from "@/components/ui/icons";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;

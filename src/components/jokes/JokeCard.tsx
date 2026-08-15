@@ -3,14 +3,14 @@ import React from "react";
 import { cn } from "@/utils/cn";
 import type { Joke } from "@/services/JokesData";
 import { getJokeText } from "@/services/JokesData";
-import { Card, PANEL_CLASSES } from "@/components/Card";
-import { CopyButton } from "@/components/CopyButton";
-import { Button } from "@/components/Button";
-import { Skeleton } from "@/components/Skeleton";
-import { GroanMeter } from "@/components/GroanMeter";
-import { StatusBadge } from "@/components/StatusBadge";
-import type { JokeStatus } from "@/components/StatusBadge";
-import { CaretRightIcon, HeartIcon, RefreshIcon } from "@/components/icons";
+import { Card, PANEL_CLASSES } from "@/components/ui/Card";
+import { CopyButton } from "@/components/ui/CopyButton";
+import { Button } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { GroanMeter } from "@/components/jokes/GroanMeter";
+import { StatusBadge } from "@/components/jokes/StatusBadge";
+import type { JokeStatus } from "@/components/jokes/StatusBadge";
+import { CaretRightIcon, HeartIcon, RefreshIcon } from "@/components/ui/icons";
 import { groanScore } from "@/utils/groan";
 
 const MICRO_LABEL_CLASSES =

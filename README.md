@@ -78,20 +78,23 @@ Een moderne, interactieve webapplicatie voor het genieten van dad jokes. Haal ve
 ```text
 src/
 ├── components/            # UI-componenten
-│   ├── Button.tsx         # Herbruikbare knop (variant + size)
-│   ├── Card.tsx           # Gedeelde card-shell + PANEL_CLASSES
-│   ├── CopyButton.tsx     # Copy-knop met ✓/✕ feedback
-│   ├── DadJoke.tsx        # Hoofdcontainer (compositie-laag)
-│   ├── ErrorBoundary.tsx  # Vangnet tegen crashes
-│   ├── FavoritesList.tsx  # Favorieten beheer
-│   ├── Footer.tsx         # Footer
-│   ├── GroanMeter.tsx     # Groan-o-Meter (score + label)
-│   ├── Header.tsx         # Header met dark-mode toggle
-│   ├── icons.tsx          # SVG-iconen (SSOT, geen emoji)
-│   ├── JokeCard.tsx       # Joke-display
-│   ├── Skeleton.tsx       # Shimmer skeleton-placeholders
-│   ├── StatusBadge.tsx    # Status-pill (loading/error/live)
-│   └── Toast.tsx          # Toast-notificatie
+│   ├── ui/                # Generieke, herbruikbare primitieven
+│   │   ├── Button.tsx     # Herbruikbare knop (variant + size)
+│   │   ├── Card.tsx       # Gedeelde card-shell + PANEL_CLASSES
+│   │   ├── CopyButton.tsx # Copy-knop met ✓/✕ feedback
+│   │   ├── icons.tsx      # SVG-iconen (SSOT, geen emoji)
+│   │   ├── Skeleton.tsx   # Shimmer skeleton-placeholders
+│   │   └── Toast.tsx      # Toast-notificatie
+│   ├── layout/            # App-chrome (header/footer/error)
+│   │   ├── Header.tsx     # Header met dark-mode toggle
+│   │   ├── Footer.tsx     # Footer
+│   │   └── ErrorBoundary.tsx # Vangnet tegen crashes
+│   ├── jokes/             # Joke-domeincomponenten
+│   │   ├── JokeCard.tsx   # Joke-display
+│   │   ├── FavoritesList.tsx # Favorieten beheer
+│   │   ├── GroanMeter.tsx # Groan-o-Meter (score + label)
+│   │   └── StatusBadge.tsx # Status-pill (loading/error/live)
+│   └── DadJoke.tsx        # Hoofdcontainer (compositie-laag)
 ├── hooks/                 # Custom hooks
 │   ├── useCopy.ts         # Copy-state-machine
 │   ├── useDarkMode.ts     # Dark-mode logica
@@ -117,7 +120,7 @@ src/
 
 ## 🧭 Code Conventies
 
-- **Path alias `@/`**: imports gebruiken altijd `@/…` i.p.v. relatieve paden (`@/hooks/useJoke`, `@/components/Header`). Een ESLint-regel (`no-restricted-imports`) dwingt dit af.
+- **Path alias `@/`**: imports gebruiken altijd `@/…` i.p.v. relatieve paden (`@/hooks/useJoke`, `@/components/ui/Button`). Een ESLint-regel (`no-restricted-imports`) dwingt dit af.
 - **`cn()` utility**: combineer classnames met `cn(...)` i.p.v. template-literals, zodat conflicterende Tailwind-classes correct worden samengevoegd.
 - **Single source of truth**: API-URL's, timeouts, drempels en meldingen staan centraal in `src/config.ts`; domeinlogica (zoals `getJokeText`) in `src/services/JokesData.ts`.
 - **Sterke types**: `no-explicit-any` en de `no-unsafe-*`-regels staan aan als error; de codebase is `any`-vrij.
@@ -141,7 +144,7 @@ Bijdragen zijn welkom! Volg deze stappen:
 ## 🙏 Credits
 
 - **API**: [icanhazdadjoke.com](https://icanhazdadjoke.com) voor de dad jokes
-- **Icons**: eigen SVG-iconen (`src/components/icons.tsx`)
+- **Icons**: eigen SVG-iconen (`src/components/ui/icons.tsx`)
 - **Fonts**: Fraunces (serif) voor koppen, systeemfonts voor body-tekst
 
 ---

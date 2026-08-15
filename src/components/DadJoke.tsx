@@ -6,11 +6,11 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { useJoke } from "@/hooks/useJoke";
 import { useNotice } from "@/hooks/useNotice";
 import { NOTICES } from "@/config";
-import Header from "@/components/Header";
-import JokeCard from "@/components/JokeCard";
-import FavoritesList from "@/components/FavoritesList";
-import Footer from "@/components/Footer";
-import { Toast } from "@/components/Toast";
+import Header from "@/components/layout/Header";
+import JokeCard from "@/components/jokes/JokeCard";
+import FavoritesList from "@/components/jokes/FavoritesList";
+import Footer from "@/components/layout/Footer";
+import { Toast } from "@/components/ui/Toast";
 
 /** Main component rendering the dad joke app. */
 const DadJoke = () => {
