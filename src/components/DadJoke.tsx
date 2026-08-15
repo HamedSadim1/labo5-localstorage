@@ -1,5 +1,6 @@
 /** Main component for the Dad Joke application, handling joke fetching, favorites, and dark mode. */
 import { useState, useEffect, useCallback, useRef } from "react";
+import axios from "axios";
 import { Joke } from "../services/JokesData";
 import { useDarkMode } from "../hooks/useDarkMode";
 import { useFavorites } from "../hooks/useFavorites";
@@ -34,10 +35,9 @@ const DadJoke = () => {
       setJoke(newJoke);
       setJokeId((id) => id + 1);
     } catch (err) {
-      if ((err as { code?: string })?.code === "ERR_CANCELED") return;
+      if (axios.isCancel(err)) return;
       console.error("Error loading joke:", err);
-      const status = (err as { response?: { status?: number } })?.response
-        ?.status;
+      const status = axios.isAxiosError(err) ? err.response?.status : undefined;
       setError(
         status === 429
           ? "Too many requests — slow down and try again in a moment."

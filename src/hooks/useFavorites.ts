@@ -10,7 +10,7 @@ const loadFavorites = (): string[] => {
   const saved = storageGet(STORAGE_KEY);
   if (!saved) return [];
   try {
-    const parsed = JSON.parse(saved);
+    const parsed: unknown = JSON.parse(saved);
     if (Array.isArray(parsed)) {
       return parsed.filter((x): x is string => typeof x === "string");
     }
