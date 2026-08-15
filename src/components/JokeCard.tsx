@@ -10,6 +10,7 @@ import {
   CopyIcon,
   HeartIcon,
   RefreshIcon,
+  XIcon,
 } from "./icons";
 
 interface JokeCardProps {
@@ -22,7 +23,7 @@ interface JokeCardProps {
   isFavorite: boolean;
 }
 
-type JokeStatus = "loading" | "offline" | "live";
+type JokeStatus = "loading" | "error" | "live";
 
 /** Visual treatment for each fetch status. */
 const statusConfig: Record<
@@ -34,10 +35,10 @@ const statusConfig: Record<
     dot: "bg-amber-500",
     label: "Loading",
   },
-  offline: {
+  error: {
     wrap: "bg-rose-500/10 text-rose-700 dark:text-rose-400",
     dot: "bg-rose-500",
-    label: "Offline",
+    label: "Error",
   },
   live: {
     wrap: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
@@ -72,12 +73,14 @@ const JokeCard: React.FC<JokeCardProps> = ({
   onNewJoke,
   isFavorite,
 }) => {
-  const { copy, isCopied } = useCopy();
-  const jokeText = joke?.attachments[0]?.text ?? "";
+  const { copy, isCopied, isFailed } = useCopy();
+  const jokeText = joke?.attachments?.[0]?.text ?? "";
   const score = groanScore(jokeText);
   const label = groanLabel(score);
 
-  const status: JokeStatus = isLoading ? "loading" : error ? "offline" : "live";
+  // Only show the skeleton on the first load; keep the joke during refreshes.
+  const isInitialLoad = isLoading && !joke;
+  const status: JokeStatus = isLoading ? "loading" : error ? "error" : "live";
   const statusStyle = statusConfig[status];
 
   return (
@@ -103,7 +106,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
           aria-live="polite"
           aria-busy={isLoading}
         >
-          {isLoading ? (
+          {isInitialLoad ? (
             <>
               <span className="sr-only">Loading a joke…</span>
               <div className="w-full" aria-hidden="true">
@@ -147,7 +150,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
         </div>
 
         <div className="mt-6">
-          {isLoading ? (
+          {isInitialLoad ? (
             <div aria-hidden="true">
               <div className="flex items-center justify-between">
                 <Skeleton className="h-3 w-32 rounded-full" />
@@ -205,6 +208,10 @@ const JokeCard: React.FC<JokeCardProps> = ({
           {isCopied() ? (
             <>
               <CheckIcon className="h-4 w-4" /> Copied!
+            </>
+          ) : isFailed() ? (
+            <>
+              <XIcon className="h-4 w-4" /> Copy failed
             </>
           ) : (
             <>

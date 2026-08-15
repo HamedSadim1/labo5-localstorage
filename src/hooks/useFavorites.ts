@@ -1,11 +1,13 @@
 /** Custom hook for managing favorite jokes stored in localStorage. */
 import { useState, useEffect } from "react";
+import { storageGet, storageSet } from "../utils/storage";
 
 const STORAGE_KEY = "favoriteJokes";
+const MAX_FAVORITES = 100;
 
 /** Loads favorites from localStorage, keeping only strings. */
 const loadFavorites = (): string[] => {
-  const saved = localStorage.getItem(STORAGE_KEY);
+  const saved = storageGet(STORAGE_KEY);
   if (!saved) return [];
   try {
     const parsed = JSON.parse(saved);
@@ -24,12 +26,15 @@ export const useFavorites = () => {
   const [favorites, setFavorites] = useState<string[]>(loadFavorites);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+    storageSet(STORAGE_KEY, JSON.stringify(favorites));
   }, [favorites]);
 
-  /** Adds a joke to favorites if not already present. */
+  /** Adds a joke to favorites if not already present and under the cap. */
   const addFavorite = (joke: string) => {
-    setFavorites((prev) => (prev.includes(joke) ? prev : [...prev, joke]));
+    setFavorites((prev) => {
+      if (prev.includes(joke) || prev.length >= MAX_FAVORITES) return prev;
+      return [...prev, joke];
+    });
   };
 
   /** Removes a favorite joke by its text. */

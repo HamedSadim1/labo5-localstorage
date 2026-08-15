@@ -16,7 +16,7 @@ const FavoritesList: React.FC<FavoritesListProps> = ({
   onRemove,
   onClear,
 }) => {
-  const { copy, isCopied } = useCopy(1500);
+  const { copy, isCopied, isFailed } = useCopy(1500);
   const [confirmingClear, setConfirmingClear] = useState(false);
   const [highlighted, setHighlighted] = useState<string | null>(null);
   const confirmTimer = useRef<number | undefined>(undefined);
@@ -114,11 +114,19 @@ const FavoritesList: React.FC<FavoritesListProps> = ({
                 <Button
                   variant="icon"
                   size="icon"
-                  aria-label={isCopied(fav) ? "Copied" : "Copy joke"}
+                  aria-label={
+                    isCopied(fav)
+                      ? "Copied"
+                      : isFailed(fav)
+                        ? "Copy failed"
+                        : "Copy joke"
+                  }
                   onClick={() => copy(fav, fav)}
                 >
                   {isCopied(fav) ? (
                     <CheckIcon className="h-4 w-4" />
+                  ) : isFailed(fav) ? (
+                    <XIcon className="h-4 w-4" />
                   ) : (
                     <CopyIcon className="h-4 w-4" />
                   )}

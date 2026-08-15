@@ -13,7 +13,7 @@ import Footer from "./Footer";
 const DadJoke = () => {
   const [joke, setJoke] = useState<Joke | null>(null);
   const [jokeId, setJokeId] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const { darkMode, toggleDarkMode } = useDarkMode();
@@ -34,10 +34,14 @@ const DadJoke = () => {
     } catch (err) {
       if ((err as { code?: string })?.code === "ERR_CANCELED") return;
       console.error("Error loading joke:", err);
+      const status = (err as { response?: { status?: number } })?.response
+        ?.status;
       setError(
-        navigator.onLine
-          ? "Couldn't load a joke. Please try again."
-          : "You're offline. Check your connection and try again."
+        status === 429
+          ? "Too many requests — slow down and try again in a moment."
+          : navigator.onLine
+            ? "Couldn't load a joke. Please try again."
+            : "You're offline. Check your connection and try again."
       );
     } finally {
       if (abortRef.current === controller) {
@@ -53,7 +57,7 @@ const DadJoke = () => {
 
   /** Toggles the current joke in/out of favorites. */
   const handleToggleFavorite = (): void => {
-    const text = joke?.attachments[0]?.text;
+    const text = joke?.attachments?.[0]?.text;
     if (!text) return;
     if (favorites.includes(text)) {
       removeFavorite(text);
@@ -63,7 +67,7 @@ const DadJoke = () => {
   };
 
   // Determine if the current joke is already a favorite
-  const jokeText = joke?.attachments[0]?.text ?? "";
+  const jokeText = joke?.attachments?.[0]?.text ?? "";
   const isFavorite: boolean = jokeText !== "" && favorites.includes(jokeText);
 
   return (
