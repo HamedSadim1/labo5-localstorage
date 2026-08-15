@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import type { Joke } from "../services/JokesData";
+import { getJokeText } from "../services/JokesData";
 import { useDarkMode } from "../hooks/useDarkMode";
 import { useFavorites } from "../hooks/useFavorites";
 import { useTimeout } from "../hooks/useTimeout";
@@ -67,7 +68,7 @@ const DadJoke = () => {
 
   /** Toggles the current joke in/out of favorites. */
   const handleToggleFavorite = (): void => {
-    const text = joke?.attachments?.[0]?.text;
+    const text = getJokeText(joke);
     if (!text) return;
     if (favorites.includes(text)) {
       removeFavorite(text);
@@ -77,7 +78,7 @@ const DadJoke = () => {
   };
 
   // Determine if the current joke is already a favorite
-  const jokeText = joke?.attachments?.[0]?.text ?? "";
+  const jokeText = getJokeText(joke);
   const isFavorite: boolean = jokeText !== "" && favorites.includes(jokeText);
 
   return (

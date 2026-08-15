@@ -1,35 +1,35 @@
 /** Custom hook for managing favorite jokes stored in localStorage. */
-import { useState, useEffect } from "react";
-import { storageGet, storageSet } from "../utils/storage";
+import { usePersistedState } from "./usePersistedState";
+import { STORAGE_KEYS } from "../config";
 
-const STORAGE_KEY = "favoriteJokes";
 const MAX_FAVORITES = 100;
 
-/** Loads favorites from localStorage, keeping only strings. */
-const loadFavorites = (): string[] => {
-  const saved = storageGet(STORAGE_KEY);
-  if (!saved) return [];
+/** Parses the persisted value into a string array. */
+const parseFavorites = (raw: string | null): string[] => {
+  if (!raw) return [];
   try {
-    const parsed: unknown = JSON.parse(saved);
+    const parsed: unknown = JSON.parse(raw);
     if (Array.isArray(parsed)) {
       return parsed.filter((x): x is string => typeof x === "string");
     }
     return typeof parsed === "string" ? [parsed] : [];
   } catch {
-    // niet JSON, behandel als string
-    return [saved];
+    // Not JSON — treat the raw string as a single favorite.
+    return [raw];
   }
 };
 
+/** Serializes favorites for persistence. */
+const serializeFavorites = (favorites: string[]): string =>
+  JSON.stringify(favorites);
+
 /** Returns favorites state and functions to add/remove/clear favorites. */
 export const useFavorites = () => {
-  const [favorites, setFavorites] = useState<string[]>(loadFavorites);
-
-  useEffect(() => {
-    if (!storageSet(STORAGE_KEY, JSON.stringify(favorites))) {
-      console.warn("Favorites could not be persisted to localStorage.");
-    }
-  }, [favorites]);
+  const [favorites, setFavorites] = usePersistedState<string[]>({
+    key: STORAGE_KEYS.favoriteJokes,
+    parse: parseFavorites,
+    serialize: serializeFavorites,
+  });
 
   /**
    * Adds a joke to favorites if not already present and under the cap.

@@ -1,37 +1,35 @@
 /** Custom hook for managing dark mode state, persisted to localStorage. */
-import { useState, useLayoutEffect } from "react";
-import { storageGet, storageSet } from "../utils/storage";
-
-const STORAGE_KEY = "darkMode";
+import { useLayoutEffect } from "react";
+import { usePersistedState } from "./usePersistedState";
+import { STORAGE_KEYS } from "../config";
 
 /** Whether the OS currently prefers a dark color scheme. */
 const systemPrefersDark = (): boolean =>
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-color-scheme: dark)").matches;
 
+/** Parses the persisted value, falling back to the system preference. */
+const parseDarkMode = (raw: string | null): boolean =>
+  raw !== null ? raw === "true" : systemPrefersDark();
+
+/** Serializes the flag for persistence. */
+const serializeDarkMode = (darkMode: boolean): string => String(darkMode);
+
 /** Returns dark mode state and toggle function (defaults to system preference). */
 export const useDarkMode = () => {
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    const saved = storageGet(STORAGE_KEY);
-    if (saved !== null) {
-      return saved === "true";
-    }
-    return systemPrefersDark();
+  const [darkMode, setDarkMode] = usePersistedState<boolean>({
+    key: STORAGE_KEYS.darkMode,
+    parse: parseDarkMode,
+    serialize: serializeDarkMode,
   });
 
   useLayoutEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-  /** Toggles the dark mode state and persists the explicit choice. */
+  /** Toggles the dark mode state (persisted by usePersistedState). */
   const toggleDarkMode = () => {
-    setDarkMode((prev) => {
-      const next = !prev;
-      if (!storageSet(STORAGE_KEY, String(next))) {
-        console.warn("Dark mode preference could not be persisted.");
-      }
-      return next;
-    });
+    setDarkMode((prev) => !prev);
   };
 
   return { darkMode, toggleDarkMode };

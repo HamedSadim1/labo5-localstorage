@@ -1,6 +1,7 @@
 /** Component for displaying the current joke with actions to favorite, copy, or get a new one. */
 import React from "react";
 import type { Joke } from "../services/JokesData";
+import { getJokeText } from "../services/JokesData";
 import { Card, PANEL_CLASSES } from "./Card";
 import { CopyButton } from "./CopyButton";
 import { Button } from "./Button";
@@ -73,7 +74,7 @@ const JokeCard: React.FC<JokeCardProps> = ({
   onNewJoke,
   isFavorite,
 }) => {
-  const jokeText = joke?.attachments?.[0]?.text ?? "";
+  const jokeText = getJokeText(joke);
   const score = groanScore(jokeText);
   const label = groanLabel(score);
 

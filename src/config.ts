@@ -22,3 +22,9 @@ export const COPY_FEEDBACK_MS = 2000;
 export const FAVORITE_HIGHLIGHT_MS = 1600;
 export const CONFIRM_RESET_MS = 3000;
 export const TOAST_DURATION_MS = 3000;
+
+/** localStorage keys. */
+export const STORAGE_KEYS = {
+  darkMode: "darkMode",
+  favoriteJokes: "favoriteJokes",
+} as const;
